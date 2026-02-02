@@ -1,1 +1,2 @@
-web: gunicorn config.wsgi:application
+release: python manage.py migrate && python seed_data.py
+web: gunicorn config.wsgi
