@@ -1,5 +1,6 @@
 ﻿import os
 import django
+import re
 
 # 1. Django 환경 설정
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
@@ -7,6 +8,10 @@ django.setup()
 
 from quiz.models import Quiz, Question, Result
 
+
+# ??? ??? ?? ?? ??? ??
+def _strip_type_suffix(text):
+    return re.sub(r"\s*\([^()]*\)\s*$", "", text).strip()
 
 def run():
     # 데이터가 중복으로 들어가지 않도록 기존 데이터를 초기화하고 싶다면 아래 주석을 해제하세요.
@@ -55,10 +60,10 @@ def run():
             order=i + 1,
             text=txt,
             defaults={
-                'choice_a': ca,
-                'choice_b': cb,
-                'choice_c': cc,
-                'choice_d': cd,
+                'choice_a': _strip_type_suffix(ca),
+                'choice_b': _strip_type_suffix(cb),
+                'choice_c': _strip_type_suffix(cc),
+                'choice_d': _strip_type_suffix(cd),
             },
         )
 
@@ -103,10 +108,10 @@ def run():
             order=i + 1,
             text=txt,
             defaults={
-                'choice_a': ca,
-                'choice_b': cb,
-                'choice_c': cc,
-                'choice_d': cd,
+                'choice_a': _strip_type_suffix(ca),
+                'choice_b': _strip_type_suffix(cb),
+                'choice_c': _strip_type_suffix(cc),
+                'choice_d': _strip_type_suffix(cd),
             },
         )
 
@@ -151,10 +156,10 @@ def run():
             order=i + 1,
             text=txt,
             defaults={
-                'choice_a': ca,
-                'choice_b': cb,
-                'choice_c': cc,
-                'choice_d': cd,
+                'choice_a': _strip_type_suffix(ca),
+                'choice_b': _strip_type_suffix(cb),
+                'choice_c': _strip_type_suffix(cc),
+                'choice_d': _strip_type_suffix(cd),
             },
         )
 
@@ -199,10 +204,10 @@ def run():
             order=i + 1,
             text=txt,
             defaults={
-                'choice_a': ca,
-                'choice_b': cb,
-                'choice_c': cc,
-                'choice_d': cd,
+                'choice_a': _strip_type_suffix(ca),
+                'choice_b': _strip_type_suffix(cb),
+                'choice_c': _strip_type_suffix(cc),
+                'choice_d': _strip_type_suffix(cd),
             },
         )
 
@@ -247,10 +252,10 @@ def run():
             order=i + 1,
             text=txt,
             defaults={
-                'choice_a': ca,
-                'choice_b': cb,
-                'choice_c': cc,
-                'choice_d': cd,
+                'choice_a': _strip_type_suffix(ca),
+                'choice_b': _strip_type_suffix(cb),
+                'choice_c': _strip_type_suffix(cc),
+                'choice_d': _strip_type_suffix(cd),
             },
         )
 
