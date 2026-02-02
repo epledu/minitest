@@ -1,4 +1,6 @@
-﻿from django.conf import settings
+﻿import os
+
+from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
@@ -88,7 +90,7 @@ def result(request):
 
     share_url = request.build_absolute_uri(reverse("quiz:result"))
     retake_url = request.build_absolute_uri(reverse("quiz:restart"))
-    kakao_js_key = getattr(settings, "KAKAO_JS_KEY", "")
+    kakao_js_key = os.getenv("KAKAO_JS_KEY") or getattr(settings, "KAKAO_JS_KEY", "")
     share_image_url = get_share_image_url(
         request,
         best_key,
@@ -104,6 +106,7 @@ def result(request):
         "retake_url": retake_url,
         "kakao_js_key": kakao_js_key,
         "share_image_url": share_image_url,
+        "kakao_share_image_url": os.getenv("KAKAO_SHARE_IMAGE_URL") or share_image_url,
         "affiliate_links": affiliate_links,
     }
     return render(request, "result.html", context)

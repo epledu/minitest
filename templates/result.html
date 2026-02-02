@@ -30,8 +30,8 @@
             </div>
 
             <div class="mt-8 flex flex-wrap items-center gap-4">
-                <button id="kakao-share" type="button" class="btn-neon inline-flex items-center gap-2 rounded-full px-6 py-3 text-base font-semibold">
-                    카카오톡 공유
+                <button id="kakaotalk-sharing-btn" onclick="shareKakao()" type="button" class="btn-neon inline-flex items-center gap-2 rounded-full px-6 py-3 text-base font-semibold">
+                    카카오톡으로 결과 공유하기 💬
                 </button>
                 <button id="copy-link" type="button" class="inline-flex items-center gap-2 rounded-full border border-neon-cyan/40 bg-night-900/80 px-6 py-3 text-base font-semibold text-neon-cyan">
                     링크 복사
@@ -75,83 +75,48 @@
 {% endblock %}
 
 {% block extra_scripts %}
-<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
 <script>
-    const shareUrl = "{{ share_url }}";
-    const retakeUrl = "{{ retake_url }}";
-    const shareTitle = "테토-에겐 호르몬 믹스 결과";
-    const shareText = "내 결과는 {{ result.title }}!";
-    const shareImage = "{{ share_image_url }}";
-    const kakaoAppKey = "{{ kakao_js_key }}";
-
     const copyMessage = document.getElementById("copy-message");
     const copyButton = document.getElementById("copy-link");
-    const kakaoButton = document.getElementById("kakao-share");
 
     async function copyToClipboard() {
         try {
-            await navigator.clipboard.writeText(shareUrl);
+            await navigator.clipboard.writeText(window.location.href);
             copyMessage.classList.remove("hidden");
             setTimeout(() => copyMessage.classList.add("hidden"), 1800);
         } catch (error) {
-            alert("복사에 실패했어요. 주소를 직접 복사해 주세요: " + shareUrl);
+            alert("복사에 실패했어요. 주소를 직접 복사해 주세요: " + window.location.href);
         }
     }
 
     copyButton.addEventListener("click", copyToClipboard);
 
-    function sendKakaoShare() {
-        if (!window.Kakao || !kakaoAppKey || !shareImage) {
-            return false;
-        }
-        if (!Kakao.isInitialized()) {
-            Kakao.init(kakaoAppKey);
+    function shareKakao() {
+        if (!window.Kakao || !Kakao.isInitialized()) {
+            alert("카카오 SDK 초기화가 필요합니다. KAKAO_JS_KEY를 확인해 주세요.");
+            return;
         }
         Kakao.Share.sendDefault({
             objectType: "feed",
             content: {
-                title: shareTitle,
-                description: shareText,
-                imageUrl: shareImage,
+                title: "나의 테토-에겐 유형은? [{{ result.title }}]",
+                description: "{{ result.description|truncatechars:40 }}",
+                imageUrl: "{{ kakao_share_image_url }}",
                 link: {
-                    mobileWebUrl: shareUrl,
-                    webUrl: shareUrl,
+                    mobileWebUrl: window.location.href,
+                    webUrl: window.location.href,
                 },
             },
             buttons: [
                 {
-                    title: "결과 보기",
+                    title: "테스트 하러 가기",
                     link: {
-                        mobileWebUrl: shareUrl,
-                        webUrl: shareUrl,
-                    },
-                },
-                {
-                    title: "다시 테스트",
-                    link: {
-                        mobileWebUrl: retakeUrl,
-                        webUrl: retakeUrl,
+                        mobileWebUrl: window.location.origin,
+                        webUrl: window.location.origin,
                     },
                 },
             ],
         });
-        return true;
     }
-
-    kakaoButton.addEventListener("click", async () => {
-        const sent = sendKakaoShare();
-        if (sent) {
-            return;
-        }
-        if (navigator.share) {
-            try {
-                await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
-                return;
-            } catch (error) {
-                // fall back to copy
-            }
-        }
-        copyToClipboard();
-    });
 </script>
 {% endblock %}

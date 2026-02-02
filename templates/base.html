@@ -149,6 +149,15 @@
             <span>SYS-REV 2026.02</span>
         </footer>
     </div>
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js" crossorigin="anonymous"></script>
+    <script>
+        if (window.Kakao && !Kakao.isInitialized()) {
+            const kakaoKey = "{{ kakao_js_key|default:'' }}";
+            if (kakaoKey) {
+                Kakao.init(kakaoKey);
+            }
+        }
+    </script>
     {% block extra_scripts %}{% endblock %}
 </body>
 </html>
