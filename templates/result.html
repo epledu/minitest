@@ -1,0 +1,163 @@
+﻿{% extends "base.html" %}
+
+{% block title %}결과{% endblock %}
+
+{% block content %}
+<section class="glass rounded-3xl px-6 py-10 md:px-12 md:py-14">
+    <div class="grid gap-8 lg:grid-cols-[1fr_0.9fr]">
+        <div>
+            <p class="mono text-xs uppercase tracking-[0.3em] text-neon-pink">Result Signal</p>
+            <h2 class="mt-4 text-4xl font-semibold md:text-5xl glow-text">{{ result.title }}</h2>
+            <p class="mt-4 text-lg text-slate-200/90">{{ result.description }}</p>
+
+            <div class="mt-6 rounded-2xl border border-neon-pink/30 bg-night-900/70 p-6">
+                <div class="flex items-center justify-between">
+                    <p class="mono text-xs uppercase tracking-[0.3em] text-neon-pink">추천 제휴 상품</p>
+                    <span class="mono text-xs text-slate-400">{{ trait_key }}</span>
+                </div>
+                <div class="mt-4 grid gap-4">
+                    {% for item in affiliate_links %}
+                    <a href="{{ item.url }}" target="_blank" rel="noopener" class="block rounded-2xl border border-night-800/60 bg-night-900/80 p-4 transition hover:border-neon-cyan/50">
+                        <div class="flex items-center justify-between">
+                            <p class="text-base font-semibold text-slate-100">{{ item.title }}</p>
+                            <span class="mono text-xs text-neon-cyan">{{ item.tag }}</span>
+                        </div>
+                        <p class="mt-2 text-sm text-slate-400">{{ item.description }}</p>
+                    </a>
+                    {% endfor %}
+                </div>
+                <p class="mt-3 text-xs text-slate-500">* 실제 제휴 링크로 교체해 주세요.</p>
+            </div>
+
+            <div class="mt-8 flex flex-wrap items-center gap-4">
+                <button id="kakao-share" type="button" class="btn-neon inline-flex items-center gap-2 rounded-full px-6 py-3 text-base font-semibold">
+                    카카오톡 공유
+                </button>
+                <button id="copy-link" type="button" class="inline-flex items-center gap-2 rounded-full border border-neon-cyan/40 bg-night-900/80 px-6 py-3 text-base font-semibold text-neon-cyan">
+                    링크 복사
+                </button>
+                <a href="{% url 'quiz:restart' %}" class="mono text-xs text-slate-400 hover:text-slate-200">다시 하기</a>
+            </div>
+            <p id="copy-message" class="mt-3 text-sm text-neon-cyan hidden">링크가 복사되었습니다.</p>
+            <p class="mt-2 text-xs text-slate-500">카카오 공유를 사용하려면 `KAKAO_JS_KEY`와 이미지 URL을 설정하세요.</p>
+        </div>
+        <div class="flex flex-col items-center gap-6">
+            <!-- Ad slot above result image (async AdSense script should be loaded in base.html head). -->
+            <div class="w-full rounded-2xl border border-neon-cyan/30 bg-night-900/60 px-5 py-6 text-left">
+                <!-- TODO: Paste Google AdSense code here (display ad) -->
+                <p class="mono text-xs uppercase tracking-[0.3em] text-neon-cyan">Sponsored</p>
+                <p class="mt-2 text-sm text-slate-400">결과 이미지 상단 광고 슬롯.</p>
+            </div>
+
+            <div class="flex items-center justify-center">
+                {% if result_key == "테토남" %}
+                    <div class="flex h-56 w-56 items-center justify-center rounded-3xl bg-gradient-to-br from-neon-cyan via-blue-600 to-night-900 shadow-glow">
+                        <span class="text-2xl font-semibold">TETO-M</span>
+                    </div>
+                {% elif result_key == "테토녀" %}
+                    <div class="flex h-56 w-56 items-center justify-center rounded-3xl bg-gradient-to-br from-neon-pink via-pink-600 to-night-900 shadow-magenta">
+                        <span class="text-2xl font-semibold">TETO-F</span>
+                    </div>
+                {% elif result_key == "에겐남" %}
+                    <div class="flex h-56 w-56 items-center justify-center rounded-3xl bg-gradient-to-br from-emerald-400 via-teal-500 to-night-900 shadow-glow">
+                        <span class="text-2xl font-semibold">EGEN-M</span>
+                    </div>
+                {% else %}
+                    <div class="flex h-56 w-56 items-center justify-center rounded-3xl bg-gradient-to-br from-violet-400 via-purple-500 to-night-900 shadow-magenta">
+                        <span class="text-2xl font-semibold">EGEN-F</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Ad slot below result image -->
+            <div class="w-full rounded-2xl border border-neon-cyan/30 bg-night-900/60 px-5 py-6 text-left">
+                <!-- TODO: Paste Google AdSense code here (display ad) -->
+                <p class="mono text-xs uppercase tracking-[0.3em] text-neon-cyan">Sponsored</p>
+                <p class="mt-2 text-sm text-slate-400">결과 이미지 하단 광고 슬롯.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
+<script>
+    const shareUrl = "{{ share_url }}";
+    const retakeUrl = "{{ retake_url }}";
+    const shareTitle = "테토-에겐 호르몬 믹스 결과";
+    const shareText = "내 결과는 {{ result.title }}!";
+    const shareImage = "{{ share_image_url }}";
+    const kakaoAppKey = "{{ kakao_js_key }}";
+
+    const copyMessage = document.getElementById("copy-message");
+    const copyButton = document.getElementById("copy-link");
+    const kakaoButton = document.getElementById("kakao-share");
+
+    async function copyToClipboard() {
+        try {
+            await navigator.clipboard.writeText(shareUrl);
+            copyMessage.classList.remove("hidden");
+            setTimeout(() => copyMessage.classList.add("hidden"), 1800);
+        } catch (error) {
+            alert("복사에 실패했어요. 주소를 직접 복사해 주세요: " + shareUrl);
+        }
+    }
+
+    copyButton.addEventListener("click", copyToClipboard);
+
+    function sendKakaoShare() {
+        if (!window.Kakao || !kakaoAppKey || !shareImage) {
+            return false;
+        }
+        if (!Kakao.isInitialized()) {
+            Kakao.init(kakaoAppKey);
+        }
+        Kakao.Share.sendDefault({
+            objectType: "feed",
+            content: {
+                title: shareTitle,
+                description: shareText,
+                imageUrl: shareImage,
+                link: {
+                    mobileWebUrl: shareUrl,
+                    webUrl: shareUrl,
+                },
+            },
+            buttons: [
+                {
+                    title: "결과 보기",
+                    link: {
+                        mobileWebUrl: shareUrl,
+                        webUrl: shareUrl,
+                    },
+                },
+                {
+                    title: "다시 테스트",
+                    link: {
+                        mobileWebUrl: retakeUrl,
+                        webUrl: retakeUrl,
+                    },
+                },
+            ],
+        });
+        return true;
+    }
+
+    kakaoButton.addEventListener("click", async () => {
+        const sent = sendKakaoShare();
+        if (sent) {
+            return;
+        }
+        if (navigator.share) {
+            try {
+                await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
+                return;
+            } catch (error) {
+                // fall back to copy
+            }
+        }
+        copyToClipboard();
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,152 @@
+﻿<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}테토-에겐 테스트{% endblock %}</title>
+    <!-- Google AdSense Auto Ads placeholder (async recommended for performance).
+         Example (keep async to avoid render blocking):
+         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=YOUR_ADSENSE_CLIENT"
+                 crossorigin="anonymous"></script>
+    -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: {
+                            cyan: "#4ffcff",
+                            pink: "#ff4fd8",
+                            purple: "#7c3cff",
+                        },
+                        night: {
+                            950: "#05060b",
+                            900: "#0b0f1d",
+                            800: "#11142a",
+                        },
+                    },
+                    boxShadow: {
+                        glow: "0 0 25px rgba(79, 252, 255, 0.45)",
+                        magenta: "0 0 35px rgba(255, 79, 216, 0.35)",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap");
+
+        body {
+            font-family: "Space Grotesk", system-ui, sans-serif;
+            background: radial-gradient(circle at top, #0f172a 0%, #05060b 45%, #020208 100%);
+        }
+
+        .mono {
+            font-family: "IBM Plex Mono", ui-monospace, monospace;
+        }
+
+        .cyber-grid::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(rgba(79, 252, 255, 0.12) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(124, 60, 255, 0.12) 1px, transparent 1px);
+            background-size: 80px 80px;
+            opacity: 0.2;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .scanline::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.04) 0px,
+                rgba(255, 255, 255, 0.04) 1px,
+                transparent 2px,
+                transparent 6px
+            );
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+            mix-blend-mode: screen;
+        }
+
+        .glow-text {
+            text-shadow: 0 0 10px rgba(79, 252, 255, 0.65), 0 0 25px rgba(124, 60, 255, 0.4);
+        }
+
+        .glass {
+            background: rgba(12, 15, 30, 0.7);
+            border: 1px solid rgba(79, 252, 255, 0.2);
+            box-shadow: 0 0 30px rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(14px);
+        }
+
+        .btn-neon {
+            background: linear-gradient(120deg, rgba(79, 252, 255, 0.9), rgba(255, 79, 216, 0.85));
+            color: #020208;
+            box-shadow: 0 0 18px rgba(79, 252, 255, 0.4), 0 0 35px rgba(255, 79, 216, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-neon:hover {
+            transform: translateY(-2px) scale(1.01);
+            box-shadow: 0 0 22px rgba(79, 252, 255, 0.6), 0 0 45px rgba(255, 79, 216, 0.45);
+        }
+
+        .pulse-border {
+            position: relative;
+        }
+
+        .pulse-border::after {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: 9999px;
+            border: 1px solid rgba(79, 252, 255, 0.55);
+            animation: pulse 2.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.04);
+            }
+            100% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="text-slate-100 cyber-grid scanline">
+    <div class="relative z-10 min-h-screen">
+        <header class="mx-auto flex max-w-5xl items-center justify-between px-6 py-6">
+            <div>
+                <p class="mono text-xs uppercase tracking-[0.4em] text-neon-cyan">Cyberpunk 2026</p>
+                <p class="text-xl font-semibold glow-text">TETO · EGEN LAB</p>
+            </div>
+            <div class="hidden sm:block text-sm text-slate-300 mono">HORMONE MIX ANALYTICS</div>
+        </header>
+
+        <main class="mx-auto w-full max-w-5xl px-6 pb-20">
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="mx-auto flex max-w-5xl items-center justify-between px-6 pb-10 text-xs text-slate-500 mono">
+            <span>Signal integrity: stable</span>
+            <span>SYS-REV 2026.02</span>
+        </footer>
+    </div>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

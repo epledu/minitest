@@ -1,0 +1,135 @@
+﻿{% extends "base.html" %}
+
+{% block title %}질문{% endblock %}
+
+{% block extra_head %}
+<style>
+    .transition-shell {
+        transition: opacity 0.45s ease, transform 0.45s ease, filter 0.45s ease;
+        will-change: opacity, transform, filter;
+    }
+
+    .transition-shell.is-leaving {
+        opacity: 0;
+        transform: translateY(-12px) scale(0.99);
+        filter: blur(2px);
+    }
+
+    .transition-shell.shake {
+        animation: shake 0.35s ease-in-out;
+    }
+
+    @keyframes shake {
+        0% { transform: translateX(0); }
+        25% { transform: translateX(-6px); }
+        50% { transform: translateX(6px); }
+        75% { transform: translateX(-4px); }
+        100% { transform: translateX(0); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section id="question-shell" class="glass rounded-3xl px-6 py-10 md:px-10 md:py-12 transition-shell">
+    {% if question %}
+    <div class="flex flex-col gap-6">
+        <div class="flex items-center justify-between">
+            <p class="mono text-xs uppercase tracking-[0.3em] text-neon-cyan">Question {{ current }}</p>
+            <p class="mono text-xs text-slate-400">{{ current }} / {{ total }}</p>
+        </div>
+        <div class="h-2 rounded-full bg-night-800">
+            <div class="h-2 rounded-full bg-neon-cyan shadow-glow" style="width: {{ progress }}%"></div>
+        </div>
+        <h2 class="text-2xl font-semibold md:text-3xl">{{ question.text }}</h2>
+
+        <form id="question-form" method="post" class="space-y-4">
+            {% csrf_token %}
+            <div class="grid gap-3">
+                {% for choice in question.choices.all %}
+                <label class="flex cursor-pointer items-center gap-3 rounded-2xl border border-night-800/60 bg-night-900/70 p-4 transition hover:border-neon-pink/50 hover:bg-night-900">
+                    <input class="h-4 w-4 accent-neon-pink" type="radio" name="choice" value="{{ choice.id }}">
+                    <span class="text-base">{{ choice.text }}</span>
+                </label>
+                {% endfor %}
+            </div>
+
+            {% if error_message %}
+            <p class="text-sm text-neon-pink">{{ error_message }}</p>
+            {% endif %}
+
+            <div class="flex flex-wrap items-center gap-4">
+                <button type="submit" class="btn-neon inline-flex items-center rounded-full px-8 py-3 text-base font-semibold">
+                    다음으로
+                </button>
+                <a href="{% url 'quiz:index' %}" class="mono text-xs text-slate-400 hover:text-slate-200">처음으로</a>
+            </div>
+        </form>
+    </div>
+    {% else %}
+    <div class="text-center">
+        <p class="text-xl">아직 질문이 없습니다.</p>
+        <p class="mt-2 text-sm text-slate-400">seed 명령어로 샘플 데이터를 추가한 뒤 다시 시작해 주세요.</p>
+        <a class="btn-neon mt-6 inline-flex items-center rounded-full px-6 py-3 text-sm font-semibold" href="{% url 'quiz:index' %}">
+            돌아가기
+        </a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const form = document.getElementById("question-form");
+    const shell = document.getElementById("question-shell");
+
+    function playTransitionSound() {
+        if (!window.AudioContext && !window.webkitAudioContext) return;
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioCtx();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = "sawtooth";
+        osc.frequency.value = 420;
+
+        gain.gain.value = 0.0001;
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        gain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 0.02);
+        osc.frequency.exponentialRampToValueAtTime(720, ctx.currentTime + 0.12);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.2);
+        osc.stop(ctx.currentTime + 0.22);
+
+        setTimeout(() => ctx.close(), 300);
+    }
+
+    if (form && shell) {
+        form.addEventListener("submit", (event) => {
+            const selected = form.querySelector('input[name="choice"]:checked');
+            if (!selected) {
+                shell.classList.remove("shake");
+                void shell.offsetWidth;
+                shell.classList.add("shake");
+                return;
+            }
+
+            event.preventDefault();
+            try {
+                playTransitionSound();
+            } catch (error) {
+                // ignore audio errors
+            }
+
+            shell.classList.add("is-leaving");
+            const button = form.querySelector('button[type="submit"]');
+            if (button) {
+                button.disabled = true;
+                button.classList.add("opacity-60");
+            }
+            setTimeout(() => form.submit(), 420);
+        });
+    }
+</script>
+{% endblock %}
