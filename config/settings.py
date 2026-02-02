@@ -35,16 +35,27 @@ if not SECRET_KEY:
     else:
         raise RuntimeError("SECRET_KEY is not set")
 
+# Hosts / CSRF (env-driven for easy Railway domain updates)
 ALLOWED_HOSTS = [
     host.strip()
-    for host in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,0.0.0.0").split(",")
+    for host in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
     if host.strip()
 ]
+if "*" in ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ["*"]
 
 CSRF_TRUSTED_ORIGINS = [
-    f"https://{host}" for host in ALLOWED_HOSTS if "railway.app" in host
+    origin.strip()
+    for origin in os.getenv(
+        "CSRF_TRUSTED_ORIGINS",
+        "http://localhost:8000,http://127.0.0.1:8000",
+    ).split(",")
+    if origin.strip()
 ]
-CSRF_TRUSTED_ORIGINS += ["http://localhost:8000", "http://127.0.0.1:8000"]
+
+CSRF_COOKIE_SECURE = os.getenv("CSRF_COOKIE_SECURE", "False").lower() in ("1", "true", "yes", "on")
+SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "False").lower() in ("1", "true", "yes", "on")
+CSRF_COOKIE_SAMESITE = os.getenv("CSRF_COOKIE_SAMESITE", "Lax" if DEBUG else "None")
 
 
 # Application definition
