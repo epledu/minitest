@@ -1,4 +1,5 @@
 ﻿{% extends "base.html" %}
+{% load static %}
 
 {% block content %}
 <h1 style="text-align: center; color: var(--main-color);">🚀 2026 트렌드 테스트</h1>
@@ -9,7 +10,13 @@
     {% for quiz in quizzes %}
     <a href="{% url 'quiz:quiz_intro' quiz.slug %}" style="text-decoration: none; color: inherit;">
         <div class="test-card" style="overflow: hidden; margin-bottom: 20px;">
-            {% if quiz.thumbnail %}
+            {% if quiz.slug == "dopamine-test" %}
+            <img src="{% static 'img/main_list.png' %}"
+            style="width: 100%; height: 200px; object-fit: cover;">
+            {% elif quiz.slug == "micro-spending" %}
+            <img src="{% static 'img/main_list1.png' %}"
+            style="width: 100%; height: 200px; object-fit: cover;">
+            {% elif quiz.thumbnail %}
             <img src="{{ quiz.thumbnail.url }}" style="width: 100%; height: 200px; object-fit: cover;">
             {% else %}
             <div style="width: 100%; height: 200px; background: #0f0f0f; display: flex; align-items: center; justify-content: center; color: #666;">

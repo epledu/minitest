@@ -1,9 +1,18 @@
 ﻿{% extends "base.html" %}
+{% load static %}
 
 {% block content %}
 <div style="text-align: center;">
     <h1 style="color: var(--main-color);">{{ quiz.title }}</h1>
     <p style="color: #aaa; margin-bottom: 20px;">{{ quiz.description }}</p>
+    {% if quiz.slug == "dopamine-test" %}
+    <img src="{% static 'img/intro.png' %}" style="width: 100%; border-radius: 16px; margin: 20px 0;">
+    {% elif quiz.slug == "micro-spending" %}
+    <img src="{% static 'img/intro1.png' %}" style="width: 100%; border-radius: 16px; margin: 20px 0;">
+    {% elif quiz.thumbnail %}
+    <img src="{{ quiz.thumbnail.url }}" style="width: 100%; border-radius: 16px; margin: 20px 0;">
+    {% endif %}
+
     <a href="{% url 'quiz:quiz_question' quiz.slug quiz.questions.first.id %}" style="display: inline-block; padding: 12px 20px; background: var(--main-color); color: #000; border-radius: 10px; text-decoration: none; font-weight: bold;">테스트 시작</a>
 </div>
 {% endblock %}
