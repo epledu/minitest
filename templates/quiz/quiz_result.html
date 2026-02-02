@@ -1,0 +1,30 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<div style="text-align: center;">
+    <p style="color: var(--main-color); margin-bottom: 5px;">당신의 분석 결과는?</p>
+    <h2 style="font-size: 28px; margin-top: 0;">{{ result.title }}</h2>
+
+    <img src="{{ result.share_image_url }}" style="width: 100%; border-radius: 20px; margin: 20px 0;">
+
+    <div style="background: #1a1a1a; padding: 20px; border-radius: 15px; text-align: left; line-height: 1.6;">
+        <p style="font-weight: bold; color: var(--main-color);">"{{ result.one_liner }}"</p>
+        <p>{{ result.description }}</p>
+
+        <div style="background: #000; padding: 15px; border-left: 4px solid var(--main-color); margin: 20px 0;">
+            <p style="margin: 0; font-size: 14px;">🛠 오늘의 디톡스 미션:</p>
+            <p style="margin: 5px 0 0 0;">{{ result.mission }}</p>
+        </div>
+    </div>
+
+    <div class="ad-container">
+        <ins class="adsbygoogle" style="display:block" data-ad-format="fluid"></ins>
+    </div>
+
+    <button onclick="shareKakao()" style="width: 100%; padding: 15px; background: #fee500; color: #000; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-bottom: 10px;">
+        카카오톡으로 결과 공유하기 💬
+    </button>
+
+    <a href="{% url 'quiz:quiz_list' %}" style="display: block; text-decoration: none; color: #aaa; font-size: 14px; margin-top: 20px;">다른 테스트도 해보기 ➔</a>
+</div>
+{% endblock %}

@@ -1,0 +1,25 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<div style="text-align: center;">
+    <p style="color: #666;">질문 {{ question.order }} / 8</p>
+    <h2 style="margin-bottom: 40px;">{{ question.text }}</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" name="choice_type" value="A" class="quiz-btn">A. {{ question.choice_a }}</button>
+        <button type="submit" name="choice_type" value="B" class="quiz-btn">B. {{ question.choice_b }}</button>
+        <button type="submit" name="choice_type" value="C" class="quiz-btn">C. {{ question.choice_c }}</button>
+        <button type="submit" name="choice_type" value="D" class="quiz-btn">D. {{ question.choice_d }}</button>
+    </form>
+</div>
+
+<style>
+    .quiz-btn {
+        width: 100%; padding: 15px; margin-bottom: 10px;
+        background: #1a1a1a; color: white; border: 1px solid #333;
+        border-radius: 10px; cursor: pointer; text-align: left;
+    }
+    .quiz-btn:hover { background: #333; border-color: var(--main-color); }
+</style>
+{% endblock %}

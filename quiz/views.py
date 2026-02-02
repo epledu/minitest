@@ -1,120 +1,103 @@
 ﻿import os
 
-from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
 
-from .models import Choice, Question, Result
-from .services.scoring import (
-    AFFILIATE_RECS,
-    DEFAULT_AFFILIATE,
-    SessionScoreService,
-    get_share_image_url,
-    pick_best_trait,
-)
+from .models import Choice, Question, Quiz, Result
 
 
-def _ordered_questions():
-    return list(Question.objects.order_by("order", "id").prefetch_related("choices"))
+def _extract_score(request, question):
+    score_value = request.POST.get("score")
+    if score_value is not None:
+        try:
+            return int(score_value)
+        except ValueError:
+            return 0
+
+    choice_id = request.POST.get("choice")
+    if not choice_id:
+        return 0
+
+    choice = get_object_or_404(Choice, id=choice_id, question=question)
+    if isinstance(choice.score, dict):
+        total = 0
+        for value in choice.score.values():
+            try:
+                total += int(value)
+            except (TypeError, ValueError):
+                continue
+        return total
+    return 0
 
 
-def index(request):
-    first_question = Question.objects.order_by("order", "id").first()
-    return render(request, "index.html", {"first_question": first_question})
+# 1. 테스트 목록 (홈 화면)
+def quiz_list(request):
+    quizzes = Quiz.objects.filter(is_active=True).order_by("-created_at")
+    return render(request, "quiz/quiz_list.html", {"quizzes": quizzes})
 
 
-def question(request, pk):
-    questions = _ordered_questions()
-    if not questions:
-        return render(request, "question.html", {"question": None})
+# 2. 테스트 시작 (인트로) - 점수 초기화
+def quiz_intro(request, quiz_slug):
+    quiz = get_object_or_404(Quiz, slug=quiz_slug, is_active=True)
+    request.session["total_score"] = 0
+    request.session["user_answers"] = []
+    return render(request, "quiz/quiz_intro.html", {"quiz": quiz})
 
-    index_map = {question.id: idx for idx, question in enumerate(questions)}
-    if pk not in index_map:
-        return redirect("quiz:question", pk=questions[0].id)
 
-    current_index = index_map[pk]
-    current_question = questions[current_index]
-    error_message = None
-    scorer = SessionScoreService(request.session)
+# 3. 질문 페이지 - 점수 누적 로직
+def quiz_question(request, quiz_slug, question_id):
+    quiz = get_object_or_404(Quiz, slug=quiz_slug, is_active=True)
+    questions = quiz.questions.all().order_by("order", "id")
+    question = get_object_or_404(Question, id=question_id, quiz=quiz)
 
     if request.method == "POST":
-        choice_id = request.POST.get("choice")
-        if not choice_id:
-            error_message = "선택지를 골라주세요."
+        choice_type = request.POST.get("choice_type")
+        user_answers = request.session.get("user_answers", [])
+        if choice_type:
+            user_answers.append(choice_type)
+            request.session["user_answers"] = user_answers
         else:
-            choice = get_object_or_404(Choice, id=choice_id, question=current_question)
-            scorer.add_scores(choice.score)
+            score = _extract_score(request, question)
+            request.session["total_score"] = request.session.get("total_score", 0) + score
 
-            next_index = current_index + 1
-            if next_index < len(questions):
-                return redirect("quiz:question", pk=questions[next_index].id)
-            return redirect("quiz:loading")
+        next_question = questions.filter(order__gt=question.order).first()
+        if next_question:
+            return redirect("quiz:quiz_question", quiz_slug=quiz.slug, question_id=next_question.id)
+        return redirect("quiz:quiz_result", quiz_slug=quiz.slug)
 
-    total = len(questions)
-    progress = int((current_index + 1) / total * 100)
-
-    context = {
-        "question": current_question,
-        "current": current_index + 1,
-        "total": total,
-        "progress": progress,
-        "error_message": error_message,
-    }
-    return render(request, "question.html", context)
+    return render(request, "quiz/quiz_question.html", {"quiz": quiz, "question": question})
 
 
-def loading(request):
-    scorer = SessionScoreService(request.session)
-    if not scorer.get_scores():
-        return redirect("quiz:index")
-    return render(request, "loading.html", {"result_url": reverse("quiz:result")})
+# 4. 결과 페이지 - 타입/점수 혼합 매칭
+def quiz_result(request, quiz_slug):
+    quiz = get_object_or_404(Quiz, slug=quiz_slug, is_active=True)
+    user_answers = request.session.get("user_answers", [])
 
+    type_scores = {"A": 0.0, "B": 0.0, "C": 0.0, "D": 0.0}
+    for i, ans_type in enumerate(user_answers):
+        weight = 1.5 if i >= 6 else 1.0
+        if ans_type in type_scores:
+            type_scores[ans_type] += weight
 
-def result(request):
-    scorer = SessionScoreService(request.session)
-    scores = scorer.get_scores()
-    if not scores:
-        return redirect("quiz:index")
+    final_type = max(type_scores, key=type_scores.get) if user_answers else None
 
-    best_key = pick_best_trait(scores)
-    if not best_key:
-        return redirect("quiz:index")
-
-    result_item = Result.objects.filter(key=best_key).only("key", "title", "description").first()
-    if not result_item:
-        result_item = Result(
-            key=best_key,
-            title=best_key,
-            description="결과 데이터를 준비 중입니다.",
+    if final_type:
+        result = Result.objects.filter(quiz=quiz, result_type=final_type).first()
+    else:
+        score = request.session.get("total_score", 0)
+        result = (
+            Result.objects.filter(quiz=quiz, min_score__lte=score, max_score__gte=score)
+            .order_by("min_score")
+            .first()
         )
 
-    share_url = request.build_absolute_uri(reverse("quiz:result"))
-    retake_url = request.build_absolute_uri(reverse("quiz:restart"))
-    kakao_js_key = os.getenv("KAKAO_JS_KEY") or getattr(settings, "KAKAO_JS_KEY", "")
-    share_image_url = get_share_image_url(
-        request,
-        best_key,
-        getattr(settings, "KAKAO_SHARE_IMAGE_URL", ""),
-    )
-    affiliate_links = AFFILIATE_RECS.get(best_key, DEFAULT_AFFILIATE)
-
     context = {
-        "result": result_item,
-        "result_key": best_key,
-        "trait_key": best_key,
-        "share_url": share_url,
-        "retake_url": retake_url,
-        "kakao_js_key": kakao_js_key,
-        "share_image_url": share_image_url,
-        "kakao_share_image_url": os.getenv("KAKAO_SHARE_IMAGE_URL") or share_image_url,
-        "affiliate_links": affiliate_links,
+        "quiz": quiz,
+        "result": result,
+        "score": request.session.get("total_score", 0),
+        "kakao_js_key": os.getenv("KAKAO_JS_KEY"),
+        "kakao_share_image_url": os.getenv("KAKAO_SHARE_IMAGE_URL"),
     }
-    return render(request, "result.html", context)
-
-
-def restart(request):
-    request.session.flush()
-    return redirect("quiz:index")
+    return render(request, "quiz/quiz_result.html", context)
 
 
 def error_404(request, exception):

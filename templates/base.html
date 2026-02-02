@@ -1,163 +1,62 @@
-﻿<!doctype html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}테토-에겐 테스트{% endblock %}</title>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6309660744842987"
-     crossorigin="anonymous"></script>
-    <!-- Google AdSense Auto Ads placeholder (async recommended for performance).
-         Example (keep async to avoid render blocking):
-         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=YOUR_ADSENSE_CLIENT"
-                 crossorigin="anonymous"></script>
-    -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        neon: {
-                            cyan: "#4ffcff",
-                            pink: "#ff4fd8",
-                            purple: "#7c3cff",
-                        },
-                        night: {
-                            950: "#05060b",
-                            900: "#0b0f1d",
-                            800: "#11142a",
-                        },
-                    },
-                    boxShadow: {
-                        glow: "0 0 25px rgba(79, 252, 255, 0.45)",
-                        magenta: "0 0 35px rgba(255, 79, 216, 0.35)",
-                    },
-                },
-            },
-        };
-    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}2026 트렌드 심리테스트{% endblock %}</title>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6309660744842987" crossorigin="anonymous"></script>
     <style>
-        @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap");
-
-        body {
-            font-family: "Space Grotesk", system-ui, sans-serif;
-            background: radial-gradient(circle at top, #0f172a 0%, #05060b 45%, #020208 100%);
+        :root {
+            --main-color: #00ffcc;
+            --neon-cyan: #00f3ff;
+            --neon-pink: #ff00ff;
+            --bg-dark: #0d0d0d;
+            --card-bg: #1a1a1a;
         }
-
-        .mono {
-            font-family: "IBM Plex Mono", ui-monospace, monospace;
+        body { background: var(--bg-dark); color: #fff; font-family: 'Pretendard', sans-serif; margin: 0; line-height: 1.6; overflow-x: hidden; }
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
+        .ad-container { margin: 20px 0; background: #1a1a1a; min-height: 100px; display: flex; align-items: center; justify-content: center; border: 1px dashed #333; }
+        .quiz-btn {
+            background: transparent;
+            border: 2px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: 0.3s;
+            box-shadow: 0 0 10px rgba(0, 243, 255, 0.2);
+            width: 100%;
+            margin-bottom: 15px;
         }
-
-        .cyber-grid::before {
-            content: "";
-            position: fixed;
-            inset: 0;
-            background-image: linear-gradient(rgba(79, 252, 255, 0.12) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(124, 60, 255, 0.12) 1px, transparent 1px);
-            background-size: 80px 80px;
-            opacity: 0.2;
-            pointer-events: none;
-            z-index: 0;
+        .quiz-btn:hover {
+            background: var(--neon-cyan);
+            color: var(--bg-dark);
+            box-shadow: 0 0 20px var(--neon-cyan);
         }
-
-        .scanline::after {
-            content: "";
-            position: fixed;
-            inset: 0;
-            background: repeating-linear-gradient(
-                to bottom,
-                rgba(255, 255, 255, 0.04) 0px,
-                rgba(255, 255, 255, 0.04) 1px,
-                transparent 2px,
-                transparent 6px
-            );
-            opacity: 0.15;
-            pointer-events: none;
-            z-index: 0;
-            mix-blend-mode: screen;
+        .test-card {
+            background: var(--card-bg);
+            border: 1px solid #333;
+            border-radius: 20px;
+            transition: transform 0.3s;
         }
-
-        .glow-text {
-            text-shadow: 0 0 10px rgba(79, 252, 255, 0.65), 0 0 25px rgba(124, 60, 255, 0.4);
-        }
-
-        .glass {
-            background: rgba(12, 15, 30, 0.7);
-            border: 1px solid rgba(79, 252, 255, 0.2);
-            box-shadow: 0 0 30px rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(14px);
-        }
-
-        .btn-neon {
-            background: linear-gradient(120deg, rgba(79, 252, 255, 0.9), rgba(255, 79, 216, 0.85));
-            color: #020208;
-            box-shadow: 0 0 18px rgba(79, 252, 255, 0.4), 0 0 35px rgba(255, 79, 216, 0.3);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .btn-neon:hover {
-            transform: translateY(-2px) scale(1.01);
-            box-shadow: 0 0 22px rgba(79, 252, 255, 0.6), 0 0 45px rgba(255, 79, 216, 0.45);
-        }
-
-        .pulse-border {
-            position: relative;
-        }
-
-        .pulse-border::after {
-            content: "";
-            position: absolute;
-            inset: -2px;
-            border-radius: 9999px;
-            border: 1px solid rgba(79, 252, 255, 0.55);
-            animation: pulse 2.5s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0% {
-                opacity: 0.4;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 1;
-                transform: scale(1.04);
-            }
-            100% {
-                opacity: 0.4;
-                transform: scale(1);
-            }
+        .test-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
         }
     </style>
-    {% block extra_head %}{% endblock %}
 </head>
-<body class="text-slate-100 cyber-grid scanline">
-    <div class="relative z-10 min-h-screen">
-        <header class="mx-auto flex max-w-5xl items-center justify-between px-6 py-6">
-            <div>
-                <p class="mono text-xs uppercase tracking-[0.4em] text-neon-cyan">Cyberpunk 2026</p>
-                <p class="text-xl font-semibold glow-text">TETO · EGEN LAB</p>
-            </div>
-            <div class="hidden sm:block text-sm text-slate-300 mono">HORMONE MIX ANALYTICS</div>
-        </header>
+<body>
+    <div class="container">
+        {% block content %}{% endblock %}
 
-        <main class="mx-auto w-full max-w-5xl px-6 pb-20">
-            {% block content %}{% endblock %}
-        </main>
-
-        <footer class="mx-auto flex max-w-5xl items-center justify-between px-6 pb-10 text-xs text-slate-500 mono">
-            <span>Signal integrity: stable</span>
-            <span>SYS-REV 2026.02</span>
+        <hr style="border: 0.5px solid #333; margin: 40px 0;">
+        <footer style="text-align: center; font-size: 12px; color: #666;">
+            <a href="{% url 'quiz:about' %}" style="color: #666;">소개</a> |
+            <a href="{% url 'quiz:privacy' %}" style="color: #666;">개인정보처리방침</a> |
+            <a href="{% url 'quiz:contact' %}" style="color: #666;">문의</a>
+            <p>© 2026 Trend Test Platform</p>
         </footer>
     </div>
-    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js" crossorigin="anonymous"></script>
-    <script>
-        if (window.Kakao && !Kakao.isInitialized()) {
-            const kakaoKey = "{{ kakao_js_key|default:'' }}";
-            if (kakaoKey) {
-                Kakao.init(kakaoKey);
-            }
-        }
-    </script>
-    {% block extra_scripts %}{% endblock %}
 </body>
 </html>
