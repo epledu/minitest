@@ -44,15 +44,15 @@
             alert("카카오 SDK 초기화가 필요합니다. KAKAO_JS_KEY를 확인해 주세요.");
             return;
         }
-        const button = document.getElementById("kakaotalk-sharing-btn") || document.querySelector("[data-share-image]");
+        const button = document.querySelector("[data-share-image]");
         const shareImage = button ? button.getAttribute("data-share-image") : "";
 
         Kakao.Share.sendDefault({
             objectType: 'feed',
             content: {
-                title: '나의 테토-에겐 유형은? [{{ result.title }}]',
-                description: '{{ result.description|truncatechars:40 }}',
-                imageUrl: shareImage || '{{ kakao_share_image_url }}',
+                title: '{{ result.title }}',
+                description: '{{ result.one_liner }}',
+                imageUrl: shareImage || '{{ result.share_image_url }}' || '{{ kakao_share_image_url }}',
                 link: {
                     mobileWebUrl: window.location.href,
                     webUrl: window.location.href,
@@ -60,7 +60,7 @@
             },
             buttons: [
                 {
-                    title: '테스트 하러 가기',
+                    title: '테스트 하러가기',
                     link: {
                         mobileWebUrl: window.location.origin,
                         webUrl: window.location.origin,

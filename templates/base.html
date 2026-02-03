@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}2026 트렌드 심리테스트{% endblock %}</title>
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js" integrity="sha384-lLeS49vY8v79ZTo5cR1M7y7Nf7t5KxS5K5cK5k5" crossorigin="anonymous"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6309660744842987" crossorigin="anonymous"></script>
     <style>
         :root {
@@ -59,5 +60,24 @@
             <p>© 2026 Trend Test Platform</p>
         </footer>
     </div>
+    <script>
+        (function () {
+            const kakaoKey = "{{ kakao_js_key|default:'' }}";
+            if (!window.Kakao) {
+                console.warn("Kakao SDK not loaded.");
+                return;
+            }
+            if (!kakaoKey) {
+                console.warn("KAKAO_JS_KEY is empty. Check .env and context.");
+                return;
+            }
+            if (!Kakao.isInitialized()) {
+                Kakao.init(kakaoKey);
+            }
+            console.info("Kakao initialized:", Kakao.isInitialized());
+            console.info("Kakao origin:", window.location.origin);
+        })();
+    </script>
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>
