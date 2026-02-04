@@ -40,7 +40,16 @@
             <img src="{% static 'img/main_list.png' %}"
             style="width: 100%; height: 200px; object-fit: cover;">
             {% elif quiz.slug == "micro-spending" %}
-            <img src="{% static 'img/main_list1.png' %}"
+            <img src="{% static 'img/micro_main.png' %}"
+            style="width: 100%; height: 200px; object-fit: cover;">
+            {% elif quiz.slug == "loneliness-management" %}
+            <img src="{% static 'img/lonely_list.png' %}"
+            style="width: 100%; height: 200px; object-fit: cover;">
+            {% elif quiz.slug == "intentional-vs-optimization" %}
+            <img src="{% static 'img/liquid_main.png' %}"
+            style="width: 100%; height: 200px; object-fit: cover;">
+            {% elif quiz.slug == "liquid-content" %}
+            <img src="{% static 'img/content_main.png' %}"
             style="width: 100%; height: 200px; object-fit: cover;">
             {% elif quiz.thumbnail %}
             <img src="{{ quiz.thumbnail.url }}" style="width: 100%; height: 200px; object-fit: cover;">

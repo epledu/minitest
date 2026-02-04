@@ -49,3 +49,23 @@ class Result(models.Model):
 
     def __str__(self):
         return f"[{self.quiz.title}] {self.title}"
+
+
+class BlogPost(models.Model):
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True)
+    summary = models.TextField(blank=True)
+    og_image_url = models.URLField(blank=True)
+    intro = models.TextField()
+    body_1 = models.TextField()
+    body_2 = models.TextField()
+    body_3 = models.TextField()
+    conclusion = models.TextField()
+    deep_dive = models.TextField(blank=True)
+    deep_dive_extra = models.TextField(blank=True)
+    is_published = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title

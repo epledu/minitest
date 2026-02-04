@@ -5,10 +5,19 @@
 <div style="text-align: center;">
     <h1 style="color: var(--main-color);">{{ quiz.title }}</h1>
     <p style="color: #aaa; margin-bottom: 20px;">{{ quiz.description }}</p>
+    {% if seo_body %}
+    <p class="muted" style="margin: 12px 0 18px; line-height: 1.7;">{{ seo_body }}</p>
+    {% endif %}
     {% if quiz.slug == "dopamine-test" %}
     <img src="{% static 'img/intro.png' %}" style="width: 100%; border-radius: 16px; margin: 20px 0;">
     {% elif quiz.slug == "micro-spending" %}
-    <img src="{% static 'img/intro1.png' %}" style="width: 100%; border-radius: 16px; margin: 20px 0;">
+    <img src="{% static 'img/micro_intro.png' %}" style="width: 100%; border-radius: 16px; margin: 20px 0;">
+    {% elif quiz.slug == "loneliness-management" %}
+    <img src="{% static 'img/lonely_main.png' %}" style="width: 100%; border-radius: 16px; margin: 20px 0;">
+    {% elif quiz.slug == "intentional-vs-optimization" %}
+    <img src="{% static 'img/liquid_main.png' %}" style="width: 100%; border-radius: 16px; margin: 20px 0;">
+    {% elif quiz.slug == "liquid-content" %}
+    <img src="{% static 'img/content_main.png' %}" style="width: 100%; border-radius: 16px; margin: 20px 0;">
     {% elif quiz.thumbnail %}
     <img src="{{ quiz.thumbnail.url }}" style="width: 100%; border-radius: 16px; margin: 20px 0;">
     {% endif %}

@@ -11,7 +11,13 @@
             {% if quiz.slug == "dopamine-test" %}
             <img src="{% static 'img/dopamin_answer.png' %}" alt="{{ result.title }}" class="main-result-img">
             {% elif quiz.slug == "micro-spending" %}
-            <img src="{% static 'img/dopamin_answer1.png' %}" alt="{{ result.title }}" class="main-result-img">
+            <img src="{% static 'img/micro_result.png' %}" alt="{{ result.title }}" class="main-result-img">
+            {% elif quiz.slug == "loneliness-management" %}
+            <img src="{% static 'img/lonely_result.png' %}" alt="{{ result.title }}" class="main-result-img">
+            {% elif quiz.slug == "intentional-vs-optimization" %}
+            <img src="{% static 'img/liquid_main.png' %}" alt="{{ result.title }}" class="main-result-img">
+            {% elif quiz.slug == "liquid-content" %}
+            <img src="{% static 'img/content_main.png' %}" alt="{{ result.title }}" class="main-result-img">
             {% elif result.share_image_url %}
             <img src="{{ result.share_image_url }}" alt="{{ result.title }}" class="main-result-img">
             {% endif %}
@@ -64,7 +70,7 @@
 
         <div class="cta-stack">
             <button onclick="shareKakao()"
-                    data-share-image="{% if quiz.slug == 'dopamine-test' %}{% static 'img/kakao_share.png' %}{% elif quiz.slug == 'micro-spending' %}{% static 'img/dopamin_answer1.png' %}{% else %}{{ kakao_share_image_url }}{% endif %}"
+                    data-share-image="{% if quiz.slug == 'dopamine-test' %}{% static 'img/kakao_share.png' %}{% elif quiz.slug == 'micro-spending' %}{% static 'img/micro_kakao.png' %}{% elif quiz.slug == 'loneliness-management' %}{% static 'img/lonely_kakao.png' %}{% elif quiz.slug == 'intentional-vs-optimization' %}{% static 'img/liquid_main.png' %}{% elif quiz.slug == 'liquid-content' %}{% static 'img/content_main.png' %}{% else %}{{ kakao_share_image_url }}{% endif %}"
                     class="primary-cta">
                 카카오톡으로 결과 공유하기 💬
                 <span class="cta-subtext">친구와 비교하면 더 재미있어요</span>
