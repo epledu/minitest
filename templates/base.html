@@ -1,34 +1,38 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{{ meta_title|default:"2026 트렌드 심리테스트" }}{% endblock %}</title>
-    <meta name="description" content="{{ meta_description|default:'짧은 질문으로 나의 성향을 알아보고, 결과를 일상에 적용하는 트렌드 테스트 플랫폼입니다.' }}">
+    <title>{% block title %}{% firstof meta_title "2026 트렌드 심리테스트" %}{% endblock %}</title>
+    <meta name="description" content="{% firstof meta_description "짧은 테스트로 내 성향을 파악하고, 결과에 맞는 미션을 제안하는 2026 트렌드 심리테스트 플랫폼입니다." %}">
     <link rel="canonical" href="{{ canonical_url|default:request.build_absolute_uri }}">
+
     <meta property="og:type" content="{{ og_type|default:'website' }}">
-    <meta property="og:title" content="{{ og_title|default:meta_title|default:'2026 트렌드 심리테스트' }}">
-    <meta property="og:description" content="{{ og_description|default:meta_description|default:'짧은 질문으로 나의 성향을 알아보고, 결과를 일상에 적용하는 트렌드 테스트 플랫폼입니다.' }}">
+    <meta property="og:title" content="{% firstof og_title meta_title "2026 트렌드 심리테스트" %}">
+    <meta property="og:description" content="{% firstof og_description meta_description "짧은 테스트로 내 성향을 파악하고, 결과에 맞는 미션을 제안하는 2026 트렌드 심리테스트 플랫폼입니다." %}">
     {% if og_image %}
     <meta property="og:image" content="{{ og_image }}">
     {% else %}
     <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/kakao_share.png' %}">
     {% endif %}
     <meta property="og:url" content="{{ canonical_url|default:request.build_absolute_uri }}">
+
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ og_title|default:meta_title|default:'2026 트렌드 심리테스트' }}">
-    <meta name="twitter:description" content="{{ og_description|default:meta_description|default:'짧은 질문으로 나의 성향을 알아보고, 결과를 일상에 적용하는 트렌드 테스트 플랫폼입니다.' }}">
+    <meta name="twitter:title" content="{% firstof og_title meta_title "2026 트렌드 심리테스트" %}">
+    <meta name="twitter:description" content="{% firstof og_description meta_description "짧은 테스트로 내 성향을 파악하고, 결과에 맞는 미션을 제안하는 2026 트렌드 심리테스트 플랫폼입니다." %}">
     {% if og_image %}
     <meta name="twitter:image" content="{{ og_image }}">
     {% else %}
     <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/kakao_share.png' %}">
     {% endif %}
+
     <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js" crossorigin="anonymous"></script>
     {% if show_ads %}
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6309660744842987" crossorigin="anonymous"></script>
     {% endif %}
     {% block extra_head %}{% endblock %}
+
     <style>
         :root {
             --main-color: #00ffcc;
@@ -147,7 +151,7 @@
 
         <hr style="border: 0.5px solid #333; margin: 40px 0;">
         <footer style="text-align: center; font-size: 12px; color: #777;">
-            <p>테스트 결과는 참고용이며, 의학적·심리학적 진단이 아닙니다.</p>
+            <p>테스트 결과는 참고용이며 의학적·심리학적 진단이 아닙니다.</p>
             <p>© 2026 Trend Test Platform</p>
         </footer>
     </div>
