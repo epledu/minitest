@@ -15,4 +15,17 @@
 
     <a href="{% url 'quiz:quiz_question' quiz.slug quiz.questions.first.id %}" style="display: inline-block; padding: 12px 20px; background: var(--main-color); color: #000; border-radius: 10px; text-decoration: none; font-weight: bold;">테스트 시작</a>
 </div>
+
+<section class="section" style="margin-top: 24px;">
+    <h2 class="section-title">진행 안내</h2>
+    <p class="muted">문항 수: 8문항 · 예상 소요: 약 1~2분</p>
+    <ul class="muted" style="margin: 12px 0 0 18px;">
+        <li>정답/오답은 없습니다. 지금의 나에 가장 가까운 선택을 골라주세요.</li>
+        <li>응답은 서버에 영구 저장되지 않으며, 세션 기반으로 처리됩니다.</li>
+        <li>결과는 자기 성찰용 콘텐츠이며 의학적·심리학적 진단이 아닙니다.</li>
+    </ul>
+    <a href="{% url 'quiz:quiz_guide' quiz.slug %}" class="muted" style="display: inline-block; margin-top: 12px; text-decoration: none;">
+        테스트 해설 보기 →
+    </a>
+</section>
 {% endblock %}

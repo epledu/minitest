@@ -8,9 +8,12 @@ app_name = "quiz"
 urlpatterns = [
     # 홈: 전체 테스트 목록
     path("", views.quiz_list, name="quiz_list"),
+    path("blog/", views.blog_list, name="blog_list"),
+    path("blog/<slug:slug>/", views.blog_detail, name="blog_detail"),
 
     # 특정 테스트의 흐름
     path("t/<slug:quiz_slug>/", views.quiz_intro, name="quiz_intro"),
+    path("t/<slug:quiz_slug>/guide/", views.quiz_guide, name="quiz_guide"),
     path("t/<slug:quiz_slug>/q/<int:question_id>/", views.quiz_question, name="quiz_question"),
     path("t/<slug:quiz_slug>/result/", views.quiz_result, name="quiz_result"),
 

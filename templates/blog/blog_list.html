@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}블로그 | 2026 트렌드 심리테스트{% endblock %}
+
+{% block content %}
+<h1 style="color: var(--main-color);">블로그</h1>
+<p class="muted">테스트 결과를 더 잘 이해할 수 있도록, 트렌드/행동 패턴을 해설하는 글을 모았습니다.</p>
+
+{% if show_ads %}
+<div class="ad-container" style="position: relative;">
+    <span class="ad-label">광고</span>
+    <ins class="adsbygoogle" style="display:block" data-ad-format="fluid"></ins>
+</div>
+{% endif %}
+
+<section class="section">
+    <h2 class="section-title">추천 글</h2>
+    <div style="display: grid; gap: 14px;">
+        {% for post in posts %}
+        <a href="{% url 'quiz:blog_detail' post.slug %}" style="text-decoration: none;">
+            <div class="test-card" style="padding: 16px;">
+                <h3 style="margin: 0 0 6px 0;">{{ post.title }}</h3>
+                <p class="muted" style="margin: 0;">{{ post.summary }}</p>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section">
+    <h2 class="section-title">콘텐츠 안내</h2>
+    <p class="muted">
+        이 블로그는 테스트의 해석과 실천 가이드를 제공하기 위한 정보성 콘텐츠입니다.
+        의료/심리 진단이 아니며, 개인의 상황에 맞게 참고용으로 활용해 주세요.
+    </p>
+</section>
+{% endblock %}

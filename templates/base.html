@@ -1,12 +1,16 @@
 {% load static %}
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}2026 트렌드 심리테스트{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}짧은 질문으로 나의 성향을 알아보고, 결과를 일상에 적용하는 트렌드 테스트 플랫폼입니다.{% endblock %}">
     <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js" crossorigin="anonymous"></script>
+    {% if show_ads %}
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6309660744842987" crossorigin="anonymous"></script>
+    {% endif %}
+    {% block extra_head %}{% endblock %}
     <style>
         :root {
             --main-color: #00ffcc;
@@ -15,9 +19,67 @@
             --bg-dark: #0d0d0d;
             --card-bg: #1a1a1a;
         }
-        body { background: var(--bg-dark) url("{% static 'img/background.png' %}") center top / cover no-repeat fixed; color: #fff; font-family: 'Pretendard', sans-serif; margin: 0; line-height: 1.6; overflow-x: hidden; }
-        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
-        .ad-container { margin: 20px 0; background: #1a1a1a; min-height: 100px; display: flex; align-items: center; justify-content: center; border: 1px dashed #333; }
+        body {
+            background: var(--bg-dark) url("{% static 'img/background.png' %}") center top / cover no-repeat fixed;
+            color: #fff;
+            font-family: "Pretendard", "Noto Sans KR", sans-serif;
+            margin: 0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        a { color: inherit; }
+        .container { max-width: 780px; margin: 0 auto; padding: 20px; }
+        .site-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .brand {
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            text-decoration: none;
+            color: var(--neon-cyan);
+        }
+        .nav-links a {
+            margin-left: 12px;
+            text-decoration: none;
+            color: #bdbdbd;
+            font-size: 14px;
+        }
+        .nav-links a:hover { color: #fff; }
+        .section {
+            background: rgba(18, 18, 18, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 18px;
+            padding: 18px;
+            margin: 18px 0;
+        }
+        .section-title {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+            color: var(--neon-cyan);
+        }
+        .muted { color: #aaa; font-size: 14px; }
+        .ad-container {
+            margin: 20px 0;
+            background: #141414;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px dashed #2a2a2a;
+            border-radius: 12px;
+        }
+        .ad-label {
+            position: absolute;
+            top: 8px;
+            right: 10px;
+            font-size: 11px;
+            color: #777;
+        }
         .quiz-btn {
             background: transparent;
             border: 2px solid var(--neon-cyan);
@@ -50,32 +112,35 @@
 </head>
 <body>
     <div class="container">
-        {% block content %}{% endblock %}
+        <header class="site-header">
+            <a class="brand" href="{% url 'quiz:quiz_list' %}">2026 Trend Test</a>
+            <nav class="nav-links">
+                <a href="{% url 'quiz:blog_list' %}">블로그</a>
+                <a href="{% url 'quiz:about' %}">소개</a>
+                <a href="{% url 'quiz:privacy' %}">개인정보처리방침</a>
+                <a href="{% url 'quiz:contact' %}">문의</a>
+            </nav>
+        </header>
+
+        <main>
+            {% block content %}{% endblock %}
+        </main>
 
         <hr style="border: 0.5px solid #333; margin: 40px 0;">
-        <footer style="text-align: center; font-size: 12px; color: #666;">
-            <a href="{% url 'quiz:about' %}" style="color: #666;">소개</a> |
-            <a href="{% url 'quiz:privacy' %}" style="color: #666;">개인정보처리방침</a> |
-            <a href="{% url 'quiz:contact' %}" style="color: #666;">문의</a>
+        <footer style="text-align: center; font-size: 12px; color: #777;">
+            <p>테스트 결과는 참고용이며, 의학적·심리학적 진단이 아닙니다.</p>
             <p>© 2026 Trend Test Platform</p>
         </footer>
     </div>
     <script>
         (function () {
             const kakaoKey = "{{ kakao_js_key|default:'' }}";
-            if (!window.Kakao) {
-                console.warn("Kakao SDK not loaded.");
-                return;
-            }
-            if (!kakaoKey) {
-                console.warn("KAKAO_JS_KEY is empty. Check .env and context.");
+            if (!kakaoKey || !window.Kakao) {
                 return;
             }
             if (!Kakao.isInitialized()) {
                 Kakao.init(kakaoKey);
             }
-            console.info("Kakao initialized:", Kakao.isInitialized());
-            console.info("Kakao origin:", window.location.origin);
         })();
     </script>
     {% block extra_scripts %}{% endblock %}

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} | 2026 트렌드 심리테스트{% endblock %}
+
+{% block content %}
+<a href="{% url 'quiz:blog_list' %}" class="muted" style="text-decoration: none;">← 블로그 목록으로</a>
+<h1 style="margin-top: 10px;">{{ post.title }}</h1>
+<p class="muted">{{ post.summary }}</p>
+
+{% if show_ads %}
+<div class="ad-container" style="position: relative;">
+    <span class="ad-label">광고</span>
+    <ins class="adsbygoogle" style="display:block" data-ad-format="fluid"></ins>
+</div>
+{% endif %}
+
+<section class="section">
+    <h2 class="section-title">서론</h2>
+    <p class="muted">
+        {{ post.title }}는 단순한 흥미를 넘어서, 우리가 일상에서 어떤 선택을 반복하고 있는지 조심스럽게 들여다보는 데 목적이 있습니다.
+        심리학과 행동과학에서는 한 사람의 행동을 ‘고정된 성격’보다 ‘상황-습관-리듬’의 조합으로 해석하려는 시도가 많습니다.
+        이 글에서는 그 관점을 빌려, 지금의 패턴을 해석하고 작은 변화로 연결하는 방법을 정리해봅니다.
+    </p>
+
+    <h2 class="section-title">본론 1. 패턴은 성격보다 앞선다</h2>
+    <p class="muted">
+        어떤 사람은 자극을 선호하고, 어떤 사람은 안정된 루틴을 선호합니다. 하지만 이런 차이는 ‘내가 어떤 사람인가’보다
+        ‘최근 어떤 환경에 있었는가’와 맞물려 설명되는 경우가 많습니다. 예를 들어, 짧고 강한 자극이 반복되는 환경에서는
+        주의가 쉽게 분산되고, 더 큰 자극을 찾는 경향이 나타날 수 있습니다. 반대로 반복 가능한 루틴이 유지되는 환경에서는
+        안정감과 예측 가능성이 행동을 단단하게 만들어 줍니다. 즉, 결과를 ‘성격’으로 단정하기보다는 지금의 리듬을 읽는
+        도구로 사용하는 것이 더 안전합니다.
+    </p>
+
+    <h2 class="section-title">본론 2. 보상 구조를 조절하는 작은 기술</h2>
+    <p class="muted">
+        행동 변화는 ‘의지’보다 ‘보상 구조’의 재설계에 가깝습니다. 행동과학 관점에서는 작은 보상이 빠르게 돌아올수록
+        습관은 강화된다고 봅니다. 그래서 중요한 것은 “하지 말자”가 아니라 “대체하자”입니다. 예를 들어, 충동적인 스크롤을
+        줄이고 싶다면 완전한 차단보다 ‘대체 보상’을 만드는 편이 지속 가능성이 높습니다. 산책, 간단한 정리, 짧은 메모처럼
+        부담이 적은 대체 행동이 의외로 강한 효과를 만들 수 있습니다.
+    </p>
+
+    <h2 class="section-title">본론 3. 해석은 방향, 실천은 속도</h2>
+    <p class="muted">
+        테스트 결과는 ‘방향’을 알려주고, 실천은 그 방향으로 ‘속도’를 붙이는 과정입니다. 결과를 보며 공감만 하고 끝내면
+        변화가 느리지만, 작고 구체적인 행동 1개를 실천하면 리듬이 바뀌기 시작합니다. 이 과정에서 중요한 건 완벽함이 아니라
+        지속 가능성입니다. “오늘 딱 10분”, “주 1회”, “알림 1개 줄이기”처럼 부담이 낮은 실행은 실패 확률을 낮추고,
+        다시 시도할 여지를 남깁니다.
+    </p>
+
+    <h2 class="section-title">결론</h2>
+    <p class="muted">
+        {{ post.summary }} 이 글이 전달하고 싶은 핵심은 단순합니다. 결과는 현재의 상태를 보여주는 거울이고,
+        변화는 아주 작은 실천에서 시작된다는 점입니다. 스스로를 진단하기보다 이해하는 태도를 유지하면, 작은 행동이 쌓여
+        나만의 리듬과 습관을 만들어 줄 것입니다.
+    </p>
+
+    {% for paragraph in post.content %}
+    <p class="muted" style="margin-top: 10px;">{{ paragraph }}</p>
+    {% endfor %}
+</section>
+
+<section class="section">
+    <h2 class="section-title">함께 하면 좋은 심리테스트</h2>
+    <p class="muted" style="margin-bottom: 18px;">
+        이 글의 내용을 실제 경험으로 연결하려면, 지금 바로 테스트를 시작해 보세요.
+        1~2분이면 결과와 미션까지 확인할 수 있습니다.
+    </p>
+    <a class="cta-button" href="{% url 'quiz:quiz_list' %}">
+        지금 바로 테스트 시작하기
+        <span class="cta-sub">빠르게 내 성향 확인</span>
+    </a>
+</section>
+
+<style>
+    .cta-button {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 16px 20px;
+        border-radius: 16px;
+        text-decoration: none;
+        color: #041014;
+        background: linear-gradient(120deg, #00f3ff, #7c3cff);
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        box-shadow: 0 12px 24px rgba(0, 243, 255, 0.25);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .cta-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 32px rgba(0, 243, 255, 0.35);
+    }
+    .cta-sub {
+        font-size: 12px;
+        color: rgba(4, 16, 20, 0.7);
+        font-weight: 600;
+    }
+    @media (max-width: 640px) {
+        .cta-button {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .cta-sub {
+            margin-top: 4px;
+        }
+    }
+</style>
+{% endblock %}
