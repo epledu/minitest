@@ -5,6 +5,17 @@
 <h1 style="margin-top: 10px;">{{ post.title }}</h1>
 <p class="muted">{{ post.summary }}</p>
 
+{% for img in post.images.all %}
+    {% if img.placement == "header" %}
+    <figure class="blog-figure">
+        <img src="{{ img.image.url }}" alt="{{ img.caption|default:post.title }}" class="blog-image">
+        {% if img.caption %}
+        <figcaption class="blog-caption">{{ img.caption }}</figcaption>
+        {% endif %}
+    </figure>
+    {% endif %}
+{% endfor %}
+
 {% if show_ads %}
 <div class="ad-container" style="position: relative;">
     <span class="ad-label">광고</span>
@@ -15,18 +26,68 @@
 <section class="section">
     <h2 class="section-title">서론</h2>
     <p class="muted" style="line-height: 1.8;">{{ post.intro }}</p>
+    {% for img in post.images.all %}
+        {% if img.placement == "intro" %}
+        <figure class="blog-figure">
+            <img src="{{ img.image.url }}" alt="{{ img.caption|default:post.title }}" class="blog-image">
+            {% if img.caption %}
+            <figcaption class="blog-caption">{{ img.caption }}</figcaption>
+            {% endif %}
+        </figure>
+        {% endif %}
+    {% endfor %}
 
     <h2 class="section-title">본론 1</h2>
     <p class="muted" style="line-height: 1.8;">{{ post.body_1 }}</p>
+    {% for img in post.images.all %}
+        {% if img.placement == "body1" %}
+        <figure class="blog-figure">
+            <img src="{{ img.image.url }}" alt="{{ img.caption|default:post.title }}" class="blog-image">
+            {% if img.caption %}
+            <figcaption class="blog-caption">{{ img.caption }}</figcaption>
+            {% endif %}
+        </figure>
+        {% endif %}
+    {% endfor %}
 
     <h2 class="section-title">본론 2</h2>
     <p class="muted" style="line-height: 1.8;">{{ post.body_2 }}</p>
+    {% for img in post.images.all %}
+        {% if img.placement == "body2" %}
+        <figure class="blog-figure">
+            <img src="{{ img.image.url }}" alt="{{ img.caption|default:post.title }}" class="blog-image">
+            {% if img.caption %}
+            <figcaption class="blog-caption">{{ img.caption }}</figcaption>
+            {% endif %}
+        </figure>
+        {% endif %}
+    {% endfor %}
 
     <h2 class="section-title">본론 3</h2>
     <p class="muted" style="line-height: 1.8;">{{ post.body_3 }}</p>
+    {% for img in post.images.all %}
+        {% if img.placement == "body3" %}
+        <figure class="blog-figure">
+            <img src="{{ img.image.url }}" alt="{{ img.caption|default:post.title }}" class="blog-image">
+            {% if img.caption %}
+            <figcaption class="blog-caption">{{ img.caption }}</figcaption>
+            {% endif %}
+        </figure>
+        {% endif %}
+    {% endfor %}
 
     <h2 class="section-title">결론</h2>
     <p class="muted" style="line-height: 1.8;">{{ post.conclusion }}</p>
+    {% for img in post.images.all %}
+        {% if img.placement == "conclusion" %}
+        <figure class="blog-figure">
+            <img src="{{ img.image.url }}" alt="{{ img.caption|default:post.title }}" class="blog-image">
+            {% if img.caption %}
+            <figcaption class="blog-caption">{{ img.caption }}</figcaption>
+            {% endif %}
+        </figure>
+        {% endif %}
+    {% endfor %}
 </section>
 
 {% if post.deep_dive %}
@@ -36,13 +97,23 @@
     {% if post.deep_dive_extra %}
     <p class="muted" style="line-height: 1.8; margin-top: 12px;">{{ post.deep_dive_extra }}</p>
     {% endif %}
+    {% for img in post.images.all %}
+        {% if img.placement == "deep_dive" %}
+        <figure class="blog-figure">
+            <img src="{{ img.image.url }}" alt="{{ img.caption|default:post.title }}" class="blog-image">
+            {% if img.caption %}
+            <figcaption class="blog-caption">{{ img.caption }}</figcaption>
+            {% endif %}
+        </figure>
+        {% endif %}
+    {% endfor %}
 </section>
 {% endif %}
 
 <section class="section">
     <h2 class="section-title">함께 하면 좋은 심리테스트</h2>
     <p class="muted" style="margin-bottom: 18px;">
-        이 글의 내용을 실제 경험으로 연결하려면, 지금 바로 테스트를 시작해 보세요.
+        이 글의 내용을 실제 경험으로 연결하려면 지금 바로 테스트를 진행해 보세요.
         1~2분이면 결과와 미션까지 확인할 수 있습니다.
     </p>
     <a class="cta-button" href="{% url 'quiz:quiz_list' %}">
@@ -52,6 +123,24 @@
 </section>
 
 <style>
+    .blog-figure {
+        margin: 18px 0 22px 0;
+        border-radius: 16px;
+        overflow: hidden;
+        background: rgba(10, 10, 10, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .blog-image {
+        width: 100%;
+        display: block;
+        border-radius: 16px;
+    }
+    .blog-caption {
+        padding: 10px 14px 14px 14px;
+        font-size: 13px;
+        color: #9aa0a6;
+        background: rgba(5, 5, 5, 0.6);
+    }
     .cta-button {
         display: flex;
         align-items: center;

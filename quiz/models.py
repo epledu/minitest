@@ -69,3 +69,27 @@ class BlogPost(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class BlogImage(models.Model):
+    PLACEMENT_CHOICES = [
+        ("header", "헤더"),
+        ("intro", "서론"),
+        ("body1", "본론 1"),
+        ("body2", "본론 2"),
+        ("body3", "본론 3"),
+        ("conclusion", "결론"),
+        ("deep_dive", "추가 인사이트"),
+    ]
+
+    post = models.ForeignKey(BlogPost, on_delete=models.CASCADE, related_name="images")
+    image = models.ImageField(upload_to="blog_images/")
+    caption = models.CharField(max_length=200, blank=True)
+    placement = models.CharField(max_length=20, choices=PLACEMENT_CHOICES, default="body1")
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ["placement", "order", "id"]
+
+    def __str__(self):
+        return f"{self.post.title} - {self.get_placement_display()}"

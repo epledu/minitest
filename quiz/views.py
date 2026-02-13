@@ -465,7 +465,7 @@ def blog_list(request):
 
 
 def blog_detail(request, slug):
-    post = get_object_or_404(BlogPost, slug=slug, is_published=True)
+    post = get_object_or_404(BlogPost.objects.prefetch_related("images"), slug=slug, is_published=True)
     summary = post.summary or post.intro
     context = {
         "post": post,
