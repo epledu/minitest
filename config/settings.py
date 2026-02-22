@@ -20,7 +20,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(BASE_DIR / '.env')
 cloudinary_url = os.getenv("CLOUDINARY_URL", "").strip()
-use_cloudinary = cloudinary_url.startswith("cloudinary://")
 
 
 # Quick-start development settings - unsuitable for production
@@ -28,6 +27,18 @@ use_cloudinary = cloudinary_url.startswith("cloudinary://")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False").lower() in ("1", "true", "yes", "on")
+
+# Media storage policy:
+# - Local debug: Cloudinary URL가 있으면 Cloudinary 사용, 없으면 로컬 /media 사용
+# - Live (DEBUG=False): Cloudinary 필수
+if DEBUG:
+    use_cloudinary = cloudinary_url.startswith("cloudinary://")
+else:
+    if not cloudinary_url.startswith("cloudinary://"):
+        raise RuntimeError(
+            "CLOUDINARY_URL must be set with cloudinary://... in production (DEBUG=False)."
+        )
+    use_cloudinary = True
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -175,7 +186,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-# Media uploads (Cloudinary in production)
+# Media uploads (Cloudinary mandatory in production)
 if use_cloudinary:
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 else:
