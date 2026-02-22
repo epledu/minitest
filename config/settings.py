@@ -19,6 +19,8 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 load_dotenv(BASE_DIR / '.env')
+cloudinary_url = os.getenv("CLOUDINARY_URL", "").strip()
+use_cloudinary = cloudinary_url.startswith("cloudinary://")
 
 
 # Quick-start development settings - unsuitable for production
@@ -67,10 +69,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cloudinary_storage',
-    'cloudinary',
     'quiz',
 ]
+
+if use_cloudinary:
+    INSTALLED_APPS += [
+        'cloudinary_storage',
+        'cloudinary',
+    ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -169,10 +175,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # Media uploads (Cloudinary in production)
-CLOUDINARY_URL = os.getenv("CLOUDINARY_URL", "").strip()
-if CLOUDINARY_URL:
+if use_cloudinary:
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 else:
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
