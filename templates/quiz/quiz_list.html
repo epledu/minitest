@@ -35,7 +35,9 @@
     {% for quiz in quizzes %}
     <a href="{% url 'quiz:quiz_intro' quiz.slug %}">
         <article class="test-card">
-            {% if quiz.slug == "dopamine-test" %}
+            {% if quiz.thumbnail %}
+            <img src="{{ quiz.thumbnail.url }}" alt="{{ quiz.title }}" class="card-media">
+            {% elif quiz.slug == "dopamine-test" %}
             <img src="{% static 'img/main_list.png' %}" alt="{{ quiz.title }}" class="card-media">
             {% elif quiz.slug == "micro-spending" %}
             <img src="{% static 'img/micro_main.png' %}" alt="{{ quiz.title }}" class="card-media">
@@ -45,8 +47,6 @@
             <img src="{% static 'img/liquid_main.png' %}" alt="{{ quiz.title }}" class="card-media">
             {% elif quiz.slug == "liquid-content" %}
             <img src="{% static 'img/content_main.png' %}" alt="{{ quiz.title }}" class="card-media">
-            {% elif quiz.thumbnail %}
-            <img src="{{ quiz.thumbnail.url }}" alt="{{ quiz.title }}" class="card-media">
             {% else %}
             <div class="card-media" style="display:flex;align-items:center;justify-content:center;background:#f3f4f6;color:#9ca3af;">
                 대표 이미지 준비 중
