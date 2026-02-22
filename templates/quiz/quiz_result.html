@@ -1,173 +1,87 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 {% load static %}
 
 {% block content %}
-<div class="result-container">
-    <div class="glass-card">
-        <p class="result-subtitle">분석 완료 · 당신의 타입</p>
-        <h2 class="result-title">{{ result.title }}</h2>
+<section class="section">
+    <p class="muted" style="margin: 0 0 6px;">분석 완료</p>
+    <h1 class="page-title" style="margin-bottom: 16px;">{{ result.title }}</h1>
 
-        <div class="result-image-wrapper">
-            {% if quiz.slug == "dopamine-test" %}
-            <img src="{% static 'img/dopamin_answer.png' %}" alt="{{ result.title }}" class="main-result-img">
-            {% elif quiz.slug == "micro-spending" %}
-            <img src="{% static 'img/micro_result.png' %}" alt="{{ result.title }}" class="main-result-img">
-            {% elif quiz.slug == "loneliness-management" %}
-            <img src="{% static 'img/lonely_result.png' %}" alt="{{ result.title }}" class="main-result-img">
-            {% elif quiz.slug == "intentional-vs-optimization" %}
-            <img src="{% static 'img/liquid_main.png' %}" alt="{{ result.title }}" class="main-result-img">
-            {% elif quiz.slug == "liquid-content" %}
-            <img src="{% static 'img/content_main.png' %}" alt="{{ result.title }}" class="main-result-img">
-            {% elif result.share_image_url %}
-            <img src="{{ result.share_image_url }}" alt="{{ result.title }}" class="main-result-img">
-            {% endif %}
-        </div>
-
-        <div class="description-box result-stack">
-            <div class="result-card">
-                <h3 class="one-liner">" {{ result.one_liner }} "</h3>
-                <p class="main-desc">{{ result.description }}</p>
-            </div>
-
-            <div class="result-card mission-card">
-                <div class="mission-tag">✨ {{ result.mission_label }}</div>
-                <p class="mission-text">{{ result.mission }}</p>
-                <p class="muted" style="margin-top: 8px;">작은 행동 하나가 리듬을 바꿉니다. 오늘 바로 시작해 보세요.</p>
-            </div>
-        </div>
-
-        {% if rarity %}
-        <div class="result-card">
-            <h3 class="card-title">희소성 인사이트</h3>
-            <p class="card-body">이 결과는 전체 응답 중 약 {{ rarity }}%에서 나타나는 패턴으로 추정됩니다.</p>
-            <p class="muted" style="margin-top: 6px;">※ 실제 통계가 누적되기 전까지는 참고용 수치로 제공됩니다.</p>
-        </div>
+    <div style="margin-bottom: 16px;">
+        {% if quiz.slug == "dopamine-test" %}
+        <img src="{% static 'img/dopamin_answer.png' %}" alt="{{ result.title }}" class="card-media" style="border-radius: 20px;">
+        {% elif quiz.slug == "micro-spending" %}
+        <img src="{% static 'img/micro_result.png' %}" alt="{{ result.title }}" class="card-media" style="border-radius: 20px;">
+        {% elif quiz.slug == "loneliness-management" %}
+        <img src="{% static 'img/lonely_result.png' %}" alt="{{ result.title }}" class="card-media" style="border-radius: 20px;">
+        {% elif quiz.slug == "intentional-vs-optimization" %}
+        <img src="{% static 'img/liquid_main.png' %}" alt="{{ result.title }}" class="card-media" style="border-radius: 20px;">
+        {% elif quiz.slug == "liquid-content" %}
+        <img src="{% static 'img/content_main.png' %}" alt="{{ result.title }}" class="card-media" style="border-radius: 20px;">
+        {% elif result.share_image %}
+        <img src="{{ result.share_image.url }}" alt="{{ result.title }}" class="card-media" style="border-radius: 20px;">
+        {% elif result.share_image_url %}
+        <img src="{{ result.share_image_url }}" alt="{{ result.title }}" class="card-media" style="border-radius: 20px;">
+        {% elif quiz.thumbnail %}
+        <img src="{{ quiz.thumbnail.url }}" alt="{{ result.title }}" class="card-media" style="border-radius: 20px;">
         {% endif %}
+    </div>
 
-        {% if match_result %}
-        <div class="result-card">
-            <h3 class="card-title">환상의 짝꿍 타입</h3>
-            <p class="card-body">당신과 균형이 잘 맞는 타입: <strong>{{ match_result.title }}</strong></p>
-            <p class="muted">다른 시선이 필요할 때 참고해 보세요.</p>
-        </div>
-        {% endif %}
+    <article class="section" style="margin: 0 0 14px;">
+        <h2 class="section-title" style="font-size: 22px; margin-bottom: 8px;">한 줄 요약</h2>
+        <p class="page-subtitle">"{{ result.one_liner }}"</p>
+        <p class="muted" style="margin-top: 12px;">{{ result.description }}</p>
+    </article>
 
-        {% if show_ads %}
-        <div class="ad-container" style="position: relative;">
-            <span class="ad-label">광고</span>
-            <ins class="adsbygoogle" style="display:block" data-ad-format="fluid"></ins>
-        </div>
-        {% endif %}
+    <article class="section" style="margin: 0 0 14px;">
+        <h2 class="section-title" style="font-size: 22px; margin-bottom: 8px;">{{ result.mission_label }}</h2>
+        <p class="muted">{{ result.mission }}</p>
+        <p class="muted" style="margin-top: 8px;">작은 행동 하나가 리듬을 바꿉니다. 오늘 바로 시작해 보세요.</p>
+    </article>
 
-        <div class="result-card">
-            <h3 class="card-title">결과 활용 가이드</h3>
-            <ul class="muted" style="margin: 12px 0 0 18px; line-height: 1.7;">
-                <li>오늘 할 수 있는 작은 행동 하나부터 실행해 보세요.</li>
-                <li>일주일 뒤 같은 테스트를 다시 해보면 변화가 보입니다.</li>
-                <li>친구와 결과를 비교하면 패턴을 더 잘 이해할 수 있습니다.</li>
-            </ul>
-        </div>
+    {% if rarity %}
+    <article class="section" style="margin: 0 0 14px;">
+        <h2 class="section-title" style="font-size: 22px; margin-bottom: 8px;">희소성 인사이트</h2>
+        <p class="muted">이 결과는 전체 응답 중 약 {{ rarity }}%에서 나타나는 패턴으로 추정됩니다.</p>
+        <p class="muted">실제 통계가 누적되기 전까지는 참고 수치로 제공됩니다.</p>
+    </article>
+    {% endif %}
 
-        <div class="cta-stack">
-            <button onclick="shareKakao()"
-                    data-share-image="{% if quiz.slug == 'dopamine-test' %}{% static 'img/kakao_share.png' %}{% elif quiz.slug == 'micro-spending' %}{% static 'img/micro_kakao.png' %}{% elif quiz.slug == 'loneliness-management' %}{% static 'img/lonely_kakao.png' %}{% elif quiz.slug == 'intentional-vs-optimization' %}{% static 'img/liquid_main.png' %}{% elif quiz.slug == 'liquid-content' %}{% static 'img/content_main.png' %}{% else %}{{ kakao_share_image_url }}{% endif %}"
-                    class="primary-cta">
-                카카오톡으로 결과 공유하기 💬
-                <span class="cta-subtext">친구와 비교하면 더 재미있어요</span>
-            </button>
-            <div class="cta-row">
-                <a class="secondary-cta" href="{% url 'quiz:quiz_list' %}">다른 테스트 보러가기</a>
-                <a class="ghost-cta" href="{% url 'quiz:quiz_guide' quiz.slug %}">이 테스트 해설 보기</a>
-            </div>
+    {% if match_result %}
+    <article class="section" style="margin: 0 0 14px;">
+        <h2 class="section-title" style="font-size: 22px; margin-bottom: 8px;">환상의 짝꿍 타입</h2>
+        <p class="muted">당신과 균형이 잘 맞는 타입은 <strong>{{ match_result.title }}</strong> 입니다.</p>
+    </article>
+    {% endif %}
+
+    {% if show_ads %}
+    <div class="ad-container">
+        <span class="ad-label">광고</span>
+        <ins class="adsbygoogle" style="display:block" data-ad-format="fluid"></ins>
+    </div>
+    {% endif %}
+
+    <article class="section" style="margin: 0 0 14px;">
+        <h2 class="section-title" style="font-size: 22px; margin-bottom: 8px;">결과 활용 가이드</h2>
+        <ul class="muted" style="margin: 10px 0 0 18px;">
+            <li>오늘 할 수 있는 작은 행동 하나부터 실행해 보세요.</li>
+            <li>일주일 뒤 같은 테스트를 다시 진행하면 변화가 보입니다.</li>
+            <li>친구와 비교하면 나의 패턴을 더 잘 이해할 수 있습니다.</li>
+        </ul>
+    </article>
+
+    <div style="display: grid; gap: 10px;">
+        <button onclick="shareKakao()"
+                data-share-image="{% if quiz.slug == 'dopamine-test' %}{% static 'img/kakao_share.png' %}{% elif quiz.slug == 'micro-spending' %}{% static 'img/micro_kakao.png' %}{% elif quiz.slug == 'loneliness-management' %}{% static 'img/lonely_kakao.png' %}{% elif quiz.slug == 'intentional-vs-optimization' %}{% static 'img/liquid_main.png' %}{% elif quiz.slug == 'liquid-content' %}{% static 'img/content_main.png' %}{% elif quiz.slug == 'travel-soul-test' %}{% if result_share_image_url %}{{ result_share_image_url }}{% elif quiz.thumbnail %}{{ request.scheme }}://{{ request.get_host }}{{ quiz.thumbnail.url }}{% else %}{{ kakao_share_image_url }}{% endif %}{% else %}{{ kakao_share_image_url }}{% endif %}"
+                class="btn-secondary"
+                style="width: 100%;">
+            카카오톡으로 결과 공유하기
+        </button>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <a class="btn-primary" href="{% url 'quiz:quiz_list' %}">다른 테스트 보기</a>
+            <a class="btn-ghost" href="{% url 'quiz:quiz_guide' quiz.slug %}">이 테스트 해설 보기</a>
         </div>
     </div>
-</div>
-
-<style>
-    .result-container { text-align: center; }
-    .result-subtitle { color: #9aa0a6; margin-bottom: 8px; letter-spacing: 0.06em; text-transform: uppercase; font-size: 12px; }
-    .result-title { font-size: 30px; margin-top: 0; line-height: 1.25; }
-    .result-image-wrapper { margin: 22px 0 16px; }
-    .main-result-img { width: 100%; border-radius: 20px; }
-    .description-box { text-align: left; line-height: 1.7; }
-    .result-stack { display: flex; flex-direction: column; gap: 16px; }
-    .one-liner { font-weight: 700; color: var(--main-color); margin-top: 0; }
-    .main-desc { color: #d6d6d6; margin-bottom: 0; }
-    .mission-text { margin: 8px 0 0 0; font-weight: 600; }
-    .result-card {
-        background: rgba(10, 10, 10, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 18px;
-        padding: 16px 18px;
-        text-align: left;
-        box-shadow: inset 0 0 0 1px rgba(0, 243, 255, 0.04);
-    }
-    .mission-card {
-        border-left: 4px solid var(--main-color);
-    }
-    .card-title { color: var(--neon-cyan); margin: 0 0 6px 0; font-size: 16px; }
-    .card-body { color: #d2d6dc; margin: 0; }
-    .glass-card {
-        background: rgba(20, 20, 20, 0.85);
-        backdrop-filter: blur(15px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 30px;
-        padding: 40px 25px;
-        margin-top: 20px;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    }
-    .mission-tag {
-        display: inline-block;
-        background: var(--neon-pink);
-        color: white;
-        padding: 5px 15px;
-        border-radius: 50px;
-        font-weight: bold;
-        font-size: 14px;
-        margin-bottom: 8px;
-    }
-    .cta-stack { margin-top: 18px; display: flex; flex-direction: column; gap: 14px; }
-    .primary-cta {
-        border: none;
-        cursor: pointer;
-        padding: 16px 18px;
-        border-radius: 16px;
-        background: linear-gradient(120deg, #fee500, #ffd400);
-        color: #111;
-        font-weight: 800;
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        text-align: left;
-        gap: 6px;
-        box-shadow: 0 12px 24px rgba(254, 229, 0, 0.25);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .primary-cta:hover { transform: translateY(-1px); box-shadow: 0 14px 28px rgba(254, 229, 0, 0.35); }
-    .cta-subtext { font-size: 12px; color: rgba(17, 17, 17, 0.65); font-weight: 600; }
-    .cta-row { display: flex; flex-wrap: wrap; gap: 10px; }
-    .secondary-cta, .ghost-cta {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 12px 16px;
-        border-radius: 999px;
-        font-size: 14px;
-        text-decoration: none;
-        transition: 0.2s ease;
-    }
-    .secondary-cta {
-        background: rgba(0, 243, 255, 0.16);
-        border: 1px solid rgba(0, 243, 255, 0.5);
-        color: #bffaff;
-    }
-    .secondary-cta:hover { background: rgba(0, 243, 255, 0.3); }
-    .ghost-cta {
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        color: #d6d6d6;
-    }
-    .ghost-cta:hover { border-color: rgba(255, 255, 255, 0.4); color: #fff; }
-</style>
+</section>
 {% endblock %}
 
 {% block extra_scripts %}
@@ -181,25 +95,25 @@
         const shareImage = button ? button.getAttribute("data-share-image") : "";
 
         Kakao.Share.sendDefault({
-            objectType: 'feed',
+            objectType: "feed",
             content: {
-                title: '{{ result.title }}',
-                description: '{{ result.one_liner }}',
-                imageUrl: shareImage || '{{ result.share_image_url }}' || '{{ kakao_share_image_url }}',
+                title: "{{ result.title }}",
+                description: "{{ result.one_liner }}",
+                imageUrl: shareImage || "{{ result_share_image_url }}" || "{{ result.share_image_url }}" || "{{ kakao_share_image_url }}",
                 link: {
                     mobileWebUrl: window.location.href,
-                    webUrl: window.location.href,
-                },
+                    webUrl: window.location.href
+                }
             },
             buttons: [
                 {
-                    title: '테스트 하러가기',
+                    title: "테스트 하러가기",
                     link: {
                         mobileWebUrl: window.location.origin,
-                        webUrl: window.location.origin,
-                    },
-                },
-            ],
+                        webUrl: window.location.origin
+                    }
+                }
+            ]
         });
     }
 </script>

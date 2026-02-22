@@ -5,7 +5,7 @@ class Quiz(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True)
     description = models.TextField()
-    thumbnail = models.ImageField(upload_to="quiz_thumbs/")
+    thumbnail = models.ImageField(upload_to="quiz_thumbs/", blank=True, null=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -20,6 +20,10 @@ class Question(models.Model):
     choice_b = models.CharField(max_length=200, default="")
     choice_c = models.CharField(max_length=200, default="")
     choice_d = models.CharField(max_length=200, default="")
+    choice_type_a = models.CharField(max_length=2, default="A")
+    choice_type_b = models.CharField(max_length=2, default="B")
+    choice_type_c = models.CharField(max_length=2, default="C")
+    choice_type_d = models.CharField(max_length=2, default="D")
     order = models.PositiveIntegerField(default=0)
 
     def __str__(self):
@@ -43,6 +47,7 @@ class Result(models.Model):
     one_liner = models.CharField(max_length=255, blank=True)
     description = models.TextField()
     mission = models.TextField(blank=True)
+    share_image = models.ImageField(upload_to="quiz_results/", blank=True, null=True)
     share_image_url = models.URLField(blank=True)
     min_score = models.IntegerField(default=0)
     max_score = models.IntegerField(default=100)

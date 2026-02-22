@@ -1,26 +1,17 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
-<div style="text-align: center;">
-    <p style="color: #666;">질문 {{ question.order }} / 8</p>
-    <h2 style="margin-bottom: 40px;">{{ question.text }}</h2>
+<section class="section" style="text-align: center;">
+    <p class="muted" style="margin-bottom: 6px;">질문 {{ question.order }} / 8</p>
+    <h2 class="section-title" style="margin-bottom: 20px;">{{ question.text }}</h2>
 
-    <form method="POST">
+    <form method="POST" style="display: grid; gap: 10px;">
         {% csrf_token %}
-        <button type="submit" name="choice_type" value="A" class="quiz-btn">A. {{ question.choice_a }}</button>
-        <button type="submit" name="choice_type" value="B" class="quiz-btn">B. {{ question.choice_b }}</button>
-        <button type="submit" name="choice_type" value="C" class="quiz-btn">C. {{ question.choice_c }}</button>
-        <button type="submit" name="choice_type" value="D" class="quiz-btn">D. {{ question.choice_d }}</button>
+        <button type="submit" name="choice_type" value="{{ question.choice_type_a|default:'A' }}" class="quiz-btn" style="justify-content: flex-start;">A. {{ question.choice_a }}</button>
+        <button type="submit" name="choice_type" value="{{ question.choice_type_b|default:'B' }}" class="quiz-btn" style="justify-content: flex-start;">B. {{ question.choice_b }}</button>
+        <button type="submit" name="choice_type" value="{{ question.choice_type_c|default:'C' }}" class="quiz-btn" style="justify-content: flex-start;">C. {{ question.choice_c }}</button>
+        <button type="submit" name="choice_type" value="{{ question.choice_type_d|default:'D' }}" class="quiz-btn" style="justify-content: flex-start;">D. {{ question.choice_d }}</button>
     </form>
-    <p class="muted" style="margin-top: 12px;">응답은 저장되지 않으며, 결과 계산을 위해 세션에만 임시 보관됩니다.</p>
-</div>
-
-<style>
-    .quiz-btn {
-        width: 100%; padding: 15px; margin-bottom: 10px;
-        background: #1a1a1a; color: white; border: 1px solid #333;
-        border-radius: 10px; cursor: pointer; text-align: left;
-    }
-    .quiz-btn:hover { background: #333; border-color: var(--main-color); }
-</style>
+    <p class="muted" style="margin-top: 14px;">응답은 저장되지 않으며 결과 계산을 위해 세션에만 임시 보관됩니다.</p>
+</section>
 {% endblock %}

@@ -330,6 +330,12 @@ QUIZ_SEO = {
         "og_image": "img/content_main.png",
         "body": "콘텐츠 소비 스타일, 알고리즘, 숏폼 서핑, 정주행, 스크린 타임, 디지털 습관",
     },
+    "travel-soul-test": {
+        "title": "캐리어 속 내 본성 찾기 | 나의 2026 여행 영혼 테스트",
+        "description": "팝업 오픈런 vs 무자극 방구석? 8개의 질문으로 나의 진짜 여행 페르소나를 찾고, 여행 스타일에 맞는 행동 미션을 확인해 보세요.",
+        "og_image": "img/travel_kakao.png",
+        "body": "여행 영혼 테스트, 캐리어 속 내 본성, 여행 페르소나, 여행 성향 분석, 2026 트렌드 테스트",
+    },
 }
 
 
@@ -446,6 +452,24 @@ QUIZ_GUIDES = {
             },
         ],
     },
+    "travel-soul-test": {
+        "title": "나의 여행 영혼 테스트 해설",
+        "summary": "여행에서 반복되는 선택 패턴으로 나의 여행 페르소나를 확인합니다.",
+        "sections": [
+            {
+                "heading": "이 테스트가 보는 것",
+                "body": "여행지에서 무엇을 우선순위로 두는지(효율, 휴식, 사진, 낭만, 미식, 힐링, 교류, 준비성)를 체크합니다.",
+            },
+            {
+                "heading": "결과를 해석하는 방법",
+                "body": "결과는 여행할 때 반복되는 의사결정 패턴을 보여주는 힌트입니다. 상황에 따라 바뀔 수 있으니 지금의 성향으로 가볍게 참고해 주세요.",
+            },
+            {
+                "heading": "실행 팁",
+                "body": "다음 여행에서 미션 한 가지만 실제로 적용해 보세요. 작은 변화만으로도 여행 만족도가 크게 달라질 수 있습니다.",
+            },
+        ],
+    },
 }
 
 
@@ -556,7 +580,17 @@ def _extract_score(request, question):
 
 # 1. 테스트 목록 (홈 화면)
 def quiz_list(request):
-    quizzes = Quiz.objects.filter(is_active=True).order_by("-created_at")
+    quizzes = list(Quiz.objects.filter(is_active=True))
+    display_order = [
+        "dopamine-test",
+        "micro-spending",
+        "loneliness-management",
+        "intentional-vs-optimization",
+        "liquid-content",
+        "travel-soul-test",
+    ]
+    order_index = {slug: idx for idx, slug in enumerate(display_order)}
+    quizzes.sort(key=lambda item: order_index.get(item.slug, len(display_order)))
     return render(request, "quiz/quiz_list.html", {"quizzes": quizzes, "show_ads": True})
 
 
@@ -598,18 +632,48 @@ def quiz_question(request, quiz_slug, question_id):
     )
 
 
+def _resolve_final_type(user_answers, valid_types):
+    if not user_answers or not valid_types:
+        return None
+
+    type_scores = {result_type: 0.0 for result_type in valid_types}
+    answer_count = len(user_answers)
+
+    for index, answer_type in enumerate(user_answers):
+        if answer_type not in type_scores:
+            continue
+        weight = 1.5 if index >= max(answer_count - 2, 0) else 1.0
+        type_scores[answer_type] += weight
+
+    if not any(type_scores.values()):
+        return None
+
+    max_score = max(type_scores.values())
+    tied_types = [result_type for result_type, score in type_scores.items() if score == max_score]
+
+    if len(tied_types) == 1:
+        return tied_types[0]
+
+    for answer_type in reversed(user_answers):
+        if answer_type in tied_types:
+            return answer_type
+
+    return sorted(tied_types)[0]
+
+
 # 4. 결과 페이지 - 타입/점수 혼합 매칭
 def quiz_result(request, quiz_slug):
     quiz = get_object_or_404(Quiz, slug=quiz_slug, is_active=True)
     user_answers = request.session.get("user_answers", [])
 
-    type_scores = {"A": 0.0, "B": 0.0, "C": 0.0, "D": 0.0}
-    for i, ans_type in enumerate(user_answers):
-        weight = 1.5 if i >= 6 else 1.0
-        if ans_type in type_scores:
-            type_scores[ans_type] += weight
+    valid_types = list(
+        Result.objects.filter(quiz=quiz)
+        .exclude(result_type="")
+        .values_list("result_type", flat=True)
+        .distinct()
+    )
 
-    final_type = max(type_scores, key=type_scores.get) if user_answers else None
+    final_type = _resolve_final_type(user_answers, valid_types)
 
     if final_type:
         result = Result.objects.filter(quiz=quiz, result_type=final_type).first()
@@ -625,10 +689,17 @@ def quiz_result(request, quiz_slug):
     base_type = final_type or getattr(result, "result_type", None)
     match_result = None
     if base_type:
-        other_types = [t for t in ["A", "B", "C", "D"] if t != base_type]
+        other_types = [result_type for result_type in valid_types if result_type != base_type]
         if other_types:
             match_type = random.choice(other_types)
             match_result = Result.objects.filter(quiz=quiz, result_type=match_type).first()
+
+    result_share_image_url = ""
+    if result:
+        if getattr(result, "share_image", None):
+            result_share_image_url = request.build_absolute_uri(result.share_image.url)
+        elif result.share_image_url:
+            result_share_image_url = result.share_image_url
 
     context = {
         "quiz": quiz,
@@ -636,6 +707,7 @@ def quiz_result(request, quiz_slug):
         "score": request.session.get("total_score", 0),
         "kakao_js_key": os.getenv("KAKAO_JS_KEY"),
         "kakao_share_image_url": os.getenv("KAKAO_SHARE_IMAGE_URL"),
+        "result_share_image_url": result_share_image_url,
         "rarity": rarity,
         "match_result": match_result,
         "show_ads": True,

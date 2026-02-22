@@ -1,17 +1,16 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 {% load static %}
 
 {% block content %}
-<h1 style="text-align: center; color: var(--main-color);">🚀 2026 트렌드 테스트</h1>
-<p class="muted" style="text-align: center; margin-top: 6px;">
-    짧은 질문으로 내 성향을 확인하고, 오늘 바로 실천할 수 있는 작은 미션까지 제안합니다.
+<h1 class="page-title">2026 트렌드 테스트</h1>
+<p class="page-subtitle">
+    짧은 질문으로 내 성향을 확인하고, 오늘 바로 실천할 수 있는 작은 미션까지 받아보세요.
 </p>
 
 <section class="section">
     <h2 class="section-title">이 사이트가 제공하는 것</h2>
     <p class="muted">
-        각 테스트는 일상 행동 패턴을 기준으로 구성되어 있으며, 결과는 "오늘부터 적용 가능한 루틴"에 초점을 맞춥니다.
-        복잡한 이론보다 실제 생활에서 바로 써먹을 수 있는 해석과 행동 제안을 제공합니다.
+        각 테스트는 일상 행동 패턴을 기준으로 구성되어 있으며 결과는 지금 당장 적용 가능한 루틴에 초점을 맞춥니다.
     </p>
     <ul class="muted" style="margin: 12px 0 0 18px;">
         <li>짧은 문항, 빠른 완료(약 1~3분)</li>
@@ -21,7 +20,7 @@
 </section>
 
 {% if show_ads %}
-<div class="ad-container" style="position: relative;">
+<div class="ad-container">
     <span class="ad-label">광고</span>
     <ins class="adsbygoogle" style="display:block" data-ad-format="fluid"></ins>
 </div>
@@ -35,34 +34,29 @@
 <div class="quiz-grid">
     {% for quiz in quizzes %}
     <a href="{% url 'quiz:quiz_intro' quiz.slug %}">
-        <div class="test-card">
+        <article class="test-card">
             {% if quiz.slug == "dopamine-test" %}
-            <img src="{% static 'img/main_list.png' %}"
-            style="width: 100%; height: 200px; object-fit: cover;">
+            <img src="{% static 'img/main_list.png' %}" alt="{{ quiz.title }}" class="card-media">
             {% elif quiz.slug == "micro-spending" %}
-            <img src="{% static 'img/micro_main.png' %}"
-            style="width: 100%; height: 200px; object-fit: cover;">
+            <img src="{% static 'img/micro_main.png' %}" alt="{{ quiz.title }}" class="card-media">
             {% elif quiz.slug == "loneliness-management" %}
-            <img src="{% static 'img/lonely_list.png' %}"
-            style="width: 100%; height: 200px; object-fit: cover;">
+            <img src="{% static 'img/lonely_list.png' %}" alt="{{ quiz.title }}" class="card-media">
             {% elif quiz.slug == "intentional-vs-optimization" %}
-            <img src="{% static 'img/liquid_main.png' %}"
-            style="width: 100%; height: 200px; object-fit: cover;">
+            <img src="{% static 'img/liquid_main.png' %}" alt="{{ quiz.title }}" class="card-media">
             {% elif quiz.slug == "liquid-content" %}
-            <img src="{% static 'img/content_main.png' %}"
-            style="width: 100%; height: 200px; object-fit: cover;">
+            <img src="{% static 'img/content_main.png' %}" alt="{{ quiz.title }}" class="card-media">
             {% elif quiz.thumbnail %}
-            <img src="{{ quiz.thumbnail.url }}" style="width: 100%; height: 200px; object-fit: cover;">
+            <img src="{{ quiz.thumbnail.url }}" alt="{{ quiz.title }}" class="card-media">
             {% else %}
-            <div style="width: 100%; height: 200px; background: #0f0f0f; display: flex; align-items: center; justify-content: center; color: #666;">
+            <div class="card-media" style="display:flex;align-items:center;justify-content:center;background:#f3f4f6;color:#9ca3af;">
                 대표 이미지 준비 중
             </div>
             {% endif %}
-            <div style="padding: 16px 16px 18px 16px;">
-                <h3>{{ quiz.title }}</h3>
-                <p>{{ quiz.description|truncatechars:40 }}</p>
+            <div class="card-body">
+                <h3 class="card-title">{{ quiz.title }}</h3>
+                <p class="card-text">{{ quiz.description|truncatechars:52 }}</p>
             </div>
-        </div>
+        </article>
     </a>
     {% endfor %}
 </div>
@@ -71,7 +65,7 @@
     <h2 class="section-title">콘텐츠 신뢰성 안내</h2>
     <p class="muted">
         결과는 오락적/자기성찰용 콘텐츠이며 의학적·심리학적 진단이 아닙니다.
-        테스트는 업데이트될 수 있으며, 문항 및 결과는 트렌드/행동 패턴을 기반으로 설계됩니다.
+        테스트는 업데이트될 수 있으며 문항과 결과는 트렌드/행동 패턴을 기반으로 설계됩니다.
     </p>
 </section>
 {% endblock %}
