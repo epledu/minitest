@@ -12,36 +12,56 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
+import warnings
 import dj_database_url
 from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-load_dotenv(BASE_DIR / '.env')
-cloudinary_url = os.getenv("CLOUDINARY_URL", "").strip()
+load_dotenv(BASE_DIR / ".env", override=False)
+
+
+def get_env(name: str, default: str = "") -> str:
+    """Read env vars safely across Railway/local and normalize accidental wrappers."""
+    raw = os.environ.get(name, default)
+    value = str(raw).strip()
+
+    if len(value) >= 2 and ((value[0] == value[-1] == '"') or (value[0] == value[-1] == "'")):
+        value = value[1:-1].strip()
+
+    # Users sometimes paste "<value>" from docs/screenshots.
+    value = value.replace("<", "").replace(">", "").strip()
+    return value
+
+
+cloudinary_url = get_env("CLOUDINARY_URL")
+if cloudinary_url:
+    # Ensure Cloudinary SDK reads the normalized value.
+    os.environ["CLOUDINARY_URL"] = cloudinary_url
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "False").lower() in ("1", "true", "yes", "on")
+DEBUG = get_env("DEBUG", "False").lower() in ("1", "true", "yes", "on")
+IS_PRODUCTION = not DEBUG
 
 # Media storage policy:
 # - Local debug: Cloudinary URL가 있으면 Cloudinary 사용, 없으면 로컬 /media 사용
 # - Live (DEBUG=False): Cloudinary 필수
-if DEBUG:
-    use_cloudinary = cloudinary_url.startswith("cloudinary://")
-else:
-    if not cloudinary_url.startswith("cloudinary://"):
-        raise RuntimeError(
-            "CLOUDINARY_URL must be set with cloudinary://... in production (DEBUG=False)."
-        )
-    use_cloudinary = True
+use_cloudinary = cloudinary_url.startswith("cloudinary://")
+if IS_PRODUCTION and not use_cloudinary:
+    warning_msg = (
+        "WARNING: CLOUDINARY_URL is missing or invalid. "
+        "Falling back to local media storage (files may be ephemeral in Railway)."
+    )
+    print(warning_msg)
+    warnings.warn(warning_msg)
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = get_env("SECRET_KEY")
 if not SECRET_KEY:
     if DEBUG:
         SECRET_KEY = "django-insecure-dev-only"
@@ -51,7 +71,7 @@ if not SECRET_KEY:
 # Hosts / CSRF (env-driven for easy Railway domain updates)
 ALLOWED_HOSTS = [
     host.strip()
-    for host in os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    for host in get_env("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
     if host.strip()
 ]
 if "*" in ALLOWED_HOSTS:
@@ -59,16 +79,16 @@ if "*" in ALLOWED_HOSTS:
 
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
-    for origin in os.getenv(
+    for origin in get_env(
         "CSRF_TRUSTED_ORIGINS",
         "http://localhost:8000,http://127.0.0.1:8000",
     ).split(",")
     if origin.strip()
 ]
 
-CSRF_COOKIE_SECURE = os.getenv("CSRF_COOKIE_SECURE", "False").lower() in ("1", "true", "yes", "on")
-SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "False").lower() in ("1", "true", "yes", "on")
-CSRF_COOKIE_SAMESITE = os.getenv("CSRF_COOKIE_SAMESITE", "Lax" if DEBUG else "None")
+CSRF_COOKIE_SECURE = get_env("CSRF_COOKIE_SECURE", "False").lower() in ("1", "true", "yes", "on")
+SESSION_COOKIE_SECURE = get_env("SESSION_COOKIE_SECURE", "False").lower() in ("1", "true", "yes", "on")
+CSRF_COOKIE_SAMESITE = get_env("CSRF_COOKIE_SAMESITE", "Lax" if DEBUG else "None")
 
 
 # Application definition
@@ -123,7 +143,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = get_env("DATABASE_URL")
 
 if DATABASE_URL:
     # Deployment environment (Railway, etc.)
@@ -176,8 +196,8 @@ USE_TZ = True
 
 
 # Kakao share settings
-KAKAO_JS_KEY = os.getenv('KAKAO_JS_KEY', '')
-KAKAO_SHARE_IMAGE_URL = os.getenv('KAKAO_SHARE_IMAGE_URL', '')
+KAKAO_JS_KEY = get_env('KAKAO_JS_KEY', '')
+KAKAO_SHARE_IMAGE_URL = get_env('KAKAO_SHARE_IMAGE_URL', '')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
