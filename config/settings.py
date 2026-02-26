@@ -182,8 +182,8 @@ MEDIA_URL = '/media/'
 # Cloudinary Storage Config (explicit dictionary)
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': 'dqg1k7exj',
-    'API_KEY': '864861739167637',
-    'API_SECRET': 'jNsoCoCQ4XDpupO3rYr0YyKsj6k',
+    'API_KEY': '549456366686882',
+    'API_SECRET': '3cz7mAki8bAU-I24St4KVAk0jlM',
 }
 
 STORAGES = {
