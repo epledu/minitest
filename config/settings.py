@@ -37,8 +37,8 @@ def get_env(name: str, default: str = "") -> str:
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
-# TEMP DEBUG MODE (requested for live error tracing)
-DEBUG = True
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = get_env("DEBUG", "False").lower() in ("1", "true", "yes", "on")
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = get_env("SECRET_KEY")
@@ -48,8 +48,13 @@ if not SECRET_KEY:
     else:
         raise RuntimeError("SECRET_KEY is not set")
 
-# TEMP: allow all hosts during debugging
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in get_env("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    if host.strip()
+]
+if "*" in ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ["*"]
 
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
