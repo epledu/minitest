@@ -184,7 +184,6 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # Media files
 MEDIA_URL = '/media/'
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Cloudinary Storage Config (explicit dictionary)
 CLOUDINARY_STORAGE = {
@@ -193,8 +192,14 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': 'jNsoCoCQ4XDpupO3rYr0YyKsj6k',
 }
 
-# Use plain static files storage in dev to avoid 500s from missing manifest.
-if DEBUG:
-    STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-else:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
+# Compatibility for cloudinary_storage collectstatic hook on recent Django.
+STATICFILES_STORAGE = STORAGES["staticfiles"]["BACKEND"]
