@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
-import warnings
 import dj_database_url
 from dotenv import load_dotenv
 
@@ -35,30 +34,11 @@ def get_env(name: str, default: str = "") -> str:
     return value
 
 
-cloudinary_url = get_env("CLOUDINARY_URL")
-if cloudinary_url:
-    # Ensure Cloudinary SDK reads the normalized value.
-    os.environ["CLOUDINARY_URL"] = cloudinary_url
-
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = get_env("DEBUG", "False").lower() in ("1", "true", "yes", "on")
-IS_PRODUCTION = not DEBUG
-
-# Media storage policy:
-# - Local debug: Cloudinary URL가 있으면 Cloudinary 사용, 없으면 로컬 /media 사용
-# - Live (DEBUG=False): Cloudinary 필수
-use_cloudinary = cloudinary_url.startswith("cloudinary://")
-if IS_PRODUCTION and not use_cloudinary:
-    warning_msg = (
-        "WARNING: CLOUDINARY_URL is missing or invalid. "
-        "Falling back to local media storage (files may be ephemeral in Railway)."
-    )
-    print(warning_msg)
-    warnings.warn(warning_msg)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = get_env("SECRET_KEY")
@@ -99,16 +79,12 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary_storage',
     'django.contrib.staticfiles',
+    'cloudinary',
     'django.contrib.sitemaps',
     'quiz',
 ]
-
-if use_cloudinary:
-    INSTALLED_APPS += [
-        'cloudinary_storage',
-        'cloudinary',
-    ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -206,13 +182,16 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-# Media uploads (Cloudinary mandatory in production)
-if use_cloudinary:
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-else:
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# Media files
+MEDIA_URL = '/media/'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+# Cloudinary Storage Config (explicit dictionary)
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dqg1k7exj',
+    'API_KEY': '864861739167637',
+    'API_SECRET': 'jNsoCoCQ4XDpupO3rYr0YyKsj6k',
+}
 
 # Use plain static files storage in dev to avoid 500s from missing manifest.
 if DEBUG:
